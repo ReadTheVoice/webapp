@@ -25,5 +25,10 @@ services:
             $accessToken: '%env(ACCESS_TOKEN)%'
             $endpoint: '%env(LOGIN_FUNCTION_ENDPOINT)%'
 
+    App\FirebaseFunctions\RegisterFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(REGISTER_FUNCTION_ENDPOINT)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
