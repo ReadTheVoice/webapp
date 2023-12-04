@@ -1,20 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello IndexController!{% endblock %}
+{% block title %}ReadTheVoice
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/opt/projet/src/Controller/IndexController.php'|file_link(0) }}">src/Controller/IndexController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/opt/projet/templates/index/index.html.twig'|file_link(0) }}">templates/index/index.html.twig</a></code></li>
-    </ul>
-</div>
+	<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center spinner-parent" id="spinner">
+		<svg class="spinner" width="60px" height="60px" viewbox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+			<circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+		</svg>
+        <span class="visually-hidden">Loading...</span>
+	</div>
+	<div id="content" class="w-100 h-100">
+		<div hx-get="{{ path("app_dashboard") }}" hx-swap="outerHTML transition:true" hx-trigger="load" hx-indicator="#spinner">
+	</div>
 {% endblock %}
