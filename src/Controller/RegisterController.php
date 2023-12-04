@@ -59,7 +59,7 @@ class RegisterController extends AbstractController
 
             if (count($errors) > 0) {
                 foreach ($errors as $error) {
-                    $flashBag->add("register_error", $error->getMessage());
+                    $this->addFlash("register_error", $error->getMessage());
                 }
                 return $this->redirectToRoute("app_register");
             }
