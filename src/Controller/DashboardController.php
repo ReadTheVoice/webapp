@@ -13,7 +13,7 @@ class DashboardController extends AbstractController
     public function index(Request $request): Response
     {
         if (!$request->cookies->get("token")) {
-            //todo
+            return $this->redirectToRoute("app_login");
         } else {
             return $this->render("dashboard/index.html.twig");
         }
