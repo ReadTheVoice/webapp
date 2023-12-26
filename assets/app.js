@@ -12,8 +12,6 @@ import "htmx.org/dist/htmx.min.js";
 import {
     Tooltip
 } from "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-
 
 htmx.onLoad(function() {
 
