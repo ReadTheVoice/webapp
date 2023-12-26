@@ -107,14 +107,9 @@ class DashboardController extends AbstractController
                 return $this->redirectToRoute("app_dashboard_settings_profile");
             }
 
-             $error = $updateUserProfileFonction->updateUserProfile($firstName, $lastName);
+            $updateUserProfileFonction->updateUserProfile($firstName, $lastName);
 
-
-            if (!$error) {
-                return $this->redirectToRoute("app_dashboard_settings_profile");
-            } else {
-                return $this->redirectToRoute("app_dashboard_settings_profile");
-            } 
+            return $this->redirectToRoute("app_dashboard_settings_profile");
 
         }
     }
@@ -155,11 +150,7 @@ class DashboardController extends AbstractController
             $error = $updateUserEmailFunction->updateUserEmail($email);
     
             if (!$error) {
-                                return $this->redirectToRoute("app_logout");
-
-
-
-                return $response;
+                return $this->redirectToRoute("app_logout");
             } else {
                 return $this->redirectToRoute("app_dashboard_settings_email");
             }
