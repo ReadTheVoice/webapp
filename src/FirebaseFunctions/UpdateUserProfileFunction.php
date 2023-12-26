@@ -1,12 +1,11 @@
-<?php 
+<?php
 
 namespace App\FirebaseFunctions;
 
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-
-class ResetPasswordFunction
+class UpdateUserProfileFunction
 {
     private $accessToken;
     private $endpoint;
@@ -20,37 +19,38 @@ class ResetPasswordFunction
         $this->flashBag = $this->requestStack->getSession()->getFlashBag();
     }
 
-    public function resetPassword(string $email)
+    public function updateUserProfile(string $firstName, string $lastName)
     {
         try {
+
+            $request = $this->requestStack->getCurrentRequest();
+            $token = $request->cookies->get("token");
             
             $data = [
-                "email" => $email,
+                "token" => $token,
+                "firstName" => $firstName,
+                "lastName" => $lastName
             ];
 
             $response = $this->makeRequest($this->endpoint, $data);
 
             if (isset($response["error"])) {
-                if ($response["error"] === "USER_NOT_FOUND") {
-                    $error = false;
-                } else if ($response["error"] === "PASSWORD_RESET_ERROR") {
-                    $this->flashBag->add("reset_password_error", "An error occured. Please try again later.");
-                    $error = true;
-                } else                {
-                    $this->flashBag->add("reset_password_error", "Unknown error.");
-                    $error = true;
+                if (in_array($response["error"], ['TOKEN_EXPIRED', 'TOKEN_INVALID', 'TOKEN_VERIFICATION_ERROR'])) {
+                    $redirectResponse = new RedirectResponse('/logout');
+                    $redirectResponse->send();
+                } else {
+                    $this->flashBag->add("profile_error", "An error occurred.");
                 }
             }
 
             if (isset($response["message"])) {
-                if ($response["message"] === "PASSWORD_RESET_EMAIL_SENT") {
-                    $error = false;
+                if ($response["message"] === "USER_PROFILE_UPDATED") {
+                    $this->flashBag->add("profile_success", "Your profile has been updated.");
                 }
             }
 
-            return $error;
         } catch (\Exception $e) {
-            throw new \RuntimeException("Firebase Reset Password Request Failed: {$e->getMessage()}", $e->getCode(), $e);
+            throw new \RuntimeException("Firebase UpdateUserProfile Request Failed: {$e->getMessage()}", $e->getCode(), $e);
         }
     }
 

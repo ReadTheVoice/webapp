@@ -225,3 +225,79 @@ body {
         color: #bad0f8;
     }
 }
+
+.navLink:hover {
+    transform: scale(1.2)
+}
+
+.navLink {
+    transition: all 200ms linear;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #c1d9ee;
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    border-radius: 0.4rem;
+    backdrop-filter: saturate(200%) blur(5px);
+}
+
+.navLink i {
+    font-size: 2em
+}
+
+@media screen and (max-width:425px) {
+    .navLink i {
+        font-size: 1.5em
+    }
+
+    .navLink {
+        width: 48px;
+        height: 48px;
+        line-height: 32px
+    }
+
+    .navLabel {
+        display: none
+    }
+}
+
+.navLink a {
+    text-decoration: none;
+    color: #204063
+}
+
+.smallContainer {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.h-87 {
+    height: 87vh;
+}
+
+.settings-svg {
+    width: auto;
+    max-height: 50vh;
+}
+
+.dashboard-content {
+    overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 10px;
+
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: $border-radius;
+    background: #c2c9d2;
+}
+
+.modal {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-backdrop {
+    display: none;
+}

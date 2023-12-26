@@ -1,12 +1,14 @@
-<?php 
+<?php
 
 namespace App\FirebaseFunctions;
 
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 
-class ResetPasswordFunction
+
+class DeleteUserAccountFunction
 {
     private $accessToken;
     private $endpoint;
@@ -20,37 +22,41 @@ class ResetPasswordFunction
         $this->flashBag = $this->requestStack->getSession()->getFlashBag();
     }
 
-    public function resetPassword(string $email)
+    public function deleteUserAccount()
     {
         try {
+
+            $request = $this->requestStack->getCurrentRequest();
+            $token = $request->cookies->get("token");
             
             $data = [
-                "email" => $email,
+                "token" => $token
             ];
 
             $response = $this->makeRequest($this->endpoint, $data);
 
             if (isset($response["error"])) {
-                if ($response["error"] === "USER_NOT_FOUND") {
-                    $error = false;
-                } else if ($response["error"] === "PASSWORD_RESET_ERROR") {
-                    $this->flashBag->add("reset_password_error", "An error occured. Please try again later.");
-                    $error = true;
-                } else                {
-                    $this->flashBag->add("reset_password_error", "Unknown error.");
+                if (in_array($response["error"], ['TOKEN_EXPIRED', 'TOKEN_INVALID', 'TOKEN_VERIFICATION_ERROR'])) {
+                    $redirectResponse = new RedirectResponse('/logout');
+                    $redirectResponse->send();
+                } else {
+                    if ($response["error"] === "USER_NOT_FOUND") {
+                        $this->flashBag->add("delete_account_error", "User not found.");
+                    } else {
+                        $this->flashBag->add("delete_account_error", "An error occurred.");
+                    }
                     $error = true;
                 }
             }
 
             if (isset($response["message"])) {
-                if ($response["message"] === "PASSWORD_RESET_EMAIL_SENT") {
-                    $error = false;
-                }
+                $error = false;
             }
 
             return $error;
+
         } catch (\Exception $e) {
-            throw new \RuntimeException("Firebase Reset Password Request Failed: {$e->getMessage()}", $e->getCode(), $e);
+            throw new \RuntimeException("Firebase UpdateUserEmail Request Failed: {$e->getMessage()}", $e->getCode(), $e);
         }
     }
 

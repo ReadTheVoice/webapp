@@ -3,10 +3,9 @@
 namespace App\FirebaseFunctions;
 
 use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 
 class LoginFunction
@@ -23,13 +22,14 @@ class LoginFunction
         $this->flashBag = $this->requestStack->getSession()->getFlashBag();
     }
 
-    public function logIn(string $email, string $password)
+    public function logIn(string $email, string $password, bool $rememberMe)
     {
         try {
             
             $data = [
                 "email" => $email,
-                "password" => $password
+                "password" => $password,
+                "rememberMe" => $rememberMe,            
             ];
 
             $response = $this->makeRequest($this->endpoint, $data);
@@ -45,8 +45,13 @@ class LoginFunction
                 $error = true;
             }
 
-            if (isset($response["userId"])) {
-                $cookie = new Cookie("token", $response["userId"], strtotime("+1 year"));
+            if (isset($response["jwtToken"])) {
+                if ($rememberMe) {
+                    $time = strtotime("+1 year");
+                } else {
+                    $time = strtotime("+1 day");
+                }
+                $cookie = new Cookie("token", $response["jwtToken"], $time);
                 $response = new Response();
                 $response->headers->setCookie($cookie);
                 $response->send();
@@ -63,12 +68,14 @@ class LoginFunction
     {
         $httpClient = HttpClient::create();
 
-        $response = $httpClient->request("POST", $endpoint, [
+        $response = $httpClient->request(
+            "POST", $endpoint, [
             "headers" => [
                 "Authorization" => $this->accessToken,
             ],
             "json" => $data,
-        ]);
+            ]
+        );
 
         return $response->toArray();
     }

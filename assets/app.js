@@ -7,5 +7,17 @@
 
 // any CSS you import will output into a single css file (app.css in this case)
 import "./styles/app.scss";
+import htmx from "htmx.org";
 import "htmx.org/dist/htmx.min.js";
+import {
+    Tooltip
+} from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
+
+htmx.onLoad(function() {
+
+
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
+})

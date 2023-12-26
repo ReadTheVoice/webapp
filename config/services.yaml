@@ -25,6 +25,11 @@ services:
             $accessToken: '%env(ACCESS_TOKEN)%'
             $endpoint: '%env(LOGIN_FUNCTION_ENDPOINT)%'
 
+    App\FirebaseFunctions\LogoutFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(LOGOUT_FUNCTION_ENDPOINT)%'
+
     App\FirebaseFunctions\RegisterFunction:
         arguments:
             $accessToken: '%env(ACCESS_TOKEN)%'
@@ -34,6 +39,29 @@ services:
         arguments:
             $accessToken: '%env(ACCESS_TOKEN)%'
             $endpoint: '%env(RESET_PASSWORD_ENDPOINT)%'
+
+    App\FirebaseFunctions\VerifyTokenFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(VERIFY_TOKEN_ENDPOINT)%'
+
+    App\FirebaseFunctions\UpdateUserProfileFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(UPDATE_USER_PROFILE_ENDPOINT)%'
+
+    App\FirebaseFunctions\UpdateUserEmailFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(UPDATE_USER_EMAIL_ENDPOINT)%'
+
+    App\FirebaseFunctions\DeleteUserAccountFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(DELETE_USER_ACCOUNT_FUNCTION_ENDPOINT)%'
+
+    App\EventListener\LogoutSubscriber:
+        tags: [kernel.event_listener]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

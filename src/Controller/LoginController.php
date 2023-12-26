@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\FirebaseFunctions\LoginFunction;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\FirebaseFunctions\LoginFunction;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class LoginController extends AbstractController
 {
@@ -25,6 +25,11 @@ class LoginController extends AbstractController
 
             $email = $request->request->get("email");
             $password = $request->request->get("password");
+            $rememberMe = $request->request->get("remember_me");
+            
+            if ($rememberMe == null) {
+                $rememberMe = false;
+            }
 
             $emailConstraint = new Assert\Email();
             $emailConstraint->message = "Email address not valid.";
@@ -41,7 +46,7 @@ class LoginController extends AbstractController
                 return $this->redirectToRoute("app_login");
             }
 
-            $error = $loginFunction->logIn($email, $password);
+            $error = $loginFunction->logIn($email, $password, $rememberMe);
 
             if (!$error) {
                 return $this->redirectToRoute("app_dashboard");

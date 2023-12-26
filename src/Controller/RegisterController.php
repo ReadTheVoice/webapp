@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\FirebaseFunctions\RegisterFunction;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\FirebaseFunctions\RegisterFunction;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RegisterController extends AbstractController
 {
@@ -31,26 +31,32 @@ class RegisterController extends AbstractController
             $firstnameConstraint = new Assert\NotBlank();
             $firstnameConstraint->message = "First name cannot be empty.";
 
-            $firstnameRegexConstraint = new Assert\Regex([
+            $firstnameRegexConstraint = new Assert\Regex(
+                [
                 "pattern" => "/^[a-zA-Z0-9\s-]+$/",
                 "message" => "First name can only contain letters, numbers, spaces, and hyphens.",
-            ]);
+                ]
+            );
 
             $lastnameConstraint = new Assert\NotBlank();
             $lastnameConstraint->message = "Last name cannot be empty.";
 
-            $lastnameRegexConstraint = new Assert\Regex([
+            $lastnameRegexConstraint = new Assert\Regex(
+                [
                 "pattern" => "/^[a-zA-Z0-9\s-]+$/",
                 "message" => "Last name can only contain letters, numbers, spaces, and hyphens.",
-            ]);
+                ]
+            );
 
             $emailConstraint = new Assert\Email();
             $emailConstraint->message = "Email address is not valid.";
 
-            $passwordConstraint = new Assert\Length([
+            $passwordConstraint = new Assert\Length(
+                [
                 "min" => 6,
                 "minMessage" => "Password must be at least {{ limit }} characters long.",
-            ]);
+                ]
+            );
 
             $errors = $validator->validate($firstname, [$firstnameConstraint, $firstnameRegexConstraint]);
             $errors = $validator->validate($lastname, [$lastnameConstraint, $lastnameRegexConstraint]);
