@@ -215,11 +215,8 @@ class DashboardController extends AbstractController
             }
 
             $error = $deleteUserAccountFunction->deleteUserAccount();
-            if (!$error) {
-                return $this->redirectToRoute("app_dashboard_settings_delete_account");
-            } else {
-                return $this->redirectToRoute("app_dashboard_settings_delete_account");
-            } 
+
+            return $this->redirectToRoute("app_dashboard_settings_delete_account");
         }   
     }
 
