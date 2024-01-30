@@ -7,6 +7,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
 use App\FirebaseFunctions\LogoutFunction;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 
 
 class LogoutSubscriber implements EventSubscriberInterface
@@ -28,5 +30,6 @@ class LogoutSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
         $token = $request->cookies->get("token");
         $this->logoutFunction->logOut($token);
+        $request->cookies->remove("token");
     }
 }
