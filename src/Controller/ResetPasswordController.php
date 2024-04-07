@@ -43,7 +43,9 @@ class ResetPasswordController extends AbstractController
             if (!$error) {
                 return $this->render("reset_password/done.html.twig");
             } else {
-                return $this->redirectToRoute("app_reset_password");
+                return $this->redirectToRoute("app_reset_password", [
+                    "email" => $email,
+                ]);
             }    
         
         }
