@@ -10,6 +10,11 @@ use App\FirebaseFunctions\ResetPasswordFunction;
 use App\FirebaseFunctions\UpdateUserEmailFunction;
 use App\FirebaseFunctions\DeleteUserAccountFunction;
 use App\FirebaseFunctions\UpdateUserProfileFunction;
+use App\FirebaseFunctions\ListUserMeetingsFunction;
+use App\FirebaseFunctions\CreateUserTranscriptionFunction;
+use App\FirebaseFunctions\DeleteUserTranscriptionFunction;
+use App\FirebaseFunctions\EndUserTranscriptionFunction;
+use App\FirebaseFunctions\GetUserTranscriptionFunction;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,14 +32,173 @@ class DashboardController extends AbstractController
     }
 
     #[Route("/dashboard/transcriptions", name: "app_dashboard_transcriptions")]
-    public function transcriptions(Request $request): Response
-    {
-        if (!$request->cookies->get("token")) {
-            return $this->redirectToRoute("app_login");
-        } else {
-            return $this->render("dashboard/transcriptions/index.html.twig");
+    public function transcriptions(Request $request, VerifyTokenFunction $verifyTokenFunction, ListUserMeetingsFunction $listUserMeetingsFunction): Response
+    { 
+        if ($request->getMethod() === "GET") {
+            if (!$request->cookies->get("token")) {
+                return $this->redirectToRoute("app_login");
+            } else {
+                $userData = $verifyTokenFunction->verifyToken();
+                $meetings = $listUserMeetingsFunction->listUserMeetings();
+                return $this->render("dashboard/transcriptions/index.html.twig", ["meetings" => $meetings]);
+            }
         }
     }
+
+    #[Route("/dashboard/transcriptions/create", name: "app_dashboard_create_transcription")]
+    public function createTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, CreateUserTranscriptionFunction $createUserTranscriptionFunction, ValidatorInterface $validator): Response
+    {
+        if ($request->getMethod() === "GET") {
+            if (!$request->cookies->get("token")) {
+                return $this->redirectToRoute("app_login");
+            } else {
+                $userData = $verifyTokenFunction->verifyToken();
+                return $this->render("dashboard/transcriptions/create.html.twig");
+            }
+        } else if ($request->getMethod() === "POST") {
+            $token = $request->request->get("token");
+            if (!$this->isCsrfTokenValid("createTranscription", $token)) {
+                return $this->redirectToRoute("app_dashboard_create_transcription");
+            }
+
+            $name = $request->request->get("name");
+            $description = $request->request->get("description");
+            $language = $request->request->get("language");
+            $allowDownload = $request->request->get("allowDownload") === 'on';
+            $isAccessibleAfter = $request->request->get("isaccessibleafter") === 'on';
+            $scheduledDateInput = $request->request->get("scheduledDate");
+            $enabledeletionDate = $request->request->get("enabledeletionDate") === 'on';
+            $deletionDateInput = $enabledeletionDate ? $request->request->get("deletionDate") : null;
+
+            $scheduledDate = \DateTime::createFromFormat('Y-m-d\TH:i', $scheduledDateInput);
+            $deletionDate = $enabledeletionDate && $deletionDateInput ? \DateTime::createFromFormat('Y-m-d\TH:i', $deletionDateInput) : null;
+
+            $constraints = new Assert\Collection([
+                "fields" => [
+                    "name" => new Assert\NotBlank(),
+                    "description" => new Assert\NotBlank(),
+                    "language" => new Assert\Choice([
+                        "choices" => ["bg", "cs", "da", "nl", "en", "et", "fr", "de", "el", "hi", "hu", "id", "it", "ja", "ko", "lv", "lt", "ms", "no", "pl", "pt", "ro", "ru", "sk", "es", "sv", "th", "tr", "uk", "vi"],
+                        "message" => "Please select a valid language.",
+                    ]),
+                    "scheduledDate" => new Assert\NotNull([
+                        'message' => 'Scheduled date must be provided.',
+                    ]),
+                    "deletionDate" => $enabledeletionDate ? new Assert\DateTime([
+                        'format' => 'Y-m-d H:i:s',
+                        'message' => 'End date must be a valid date and time.',
+                    ]) : new Assert\Optional(),
+                ],
+                "allowMissingFields" => true,
+            ]);
+
+            $input = [
+                "name" => $name,
+                "description" => $description,
+                "language" => $language,
+                "scheduledDate" => $scheduledDate ? $scheduledDate->format('Y-m-d H:i:s') : null,
+                "deletionDate" => $deletionDate ? $deletionDate->format('Y-m-d H:i:s') : null,
+            ];
+
+            $violations = $validator->validate($input, $constraints);
+
+            if (count($violations) > 0) {
+                foreach ($violations as $violation) {
+                    $this->addFlash("create_transcription_error", $violation->getMessage());
+                }
+                return $this->redirectToRoute("app_dashboard_create_transcription", [
+                    "name" => $name, "description" => $description, "scheduledDate" => $scheduledDateInput, "deletionDate" => $deletionDateInput, "isAccessibleAfter" => $isAccessibleAfter, "allowDownload" => $allowDownload, "language" => $language
+                ]);
+            }
+
+            if ($deletionDate && $scheduledDate && $deletionDate <= $scheduledDate) {
+                $this->addFlash("create_transcription_error", "End date must be after the scheduled start date.");
+                return $this->redirectToRoute("app_dashboard_create_transcription", [
+                    "name" => $name,
+                    "description" => $description,
+                    "scheduledDate" => $scheduledDateInput,
+                    "deletionDate" => $deletionDateInput,
+                    "isAccessibleAfter" => $isAccessibleAfter,
+                    "allowDownload" => $allowDownload,
+                    "language" => $language,
+                ]);
+            }
+
+            $status = $createUserTranscriptionFunction->createUserTranscription($name, $description, $isAccessibleAfter, $language, $allowDownload, $scheduledDate->format('Y-m-d H:i:s'), $deletionDate ? $deletionDate->format('Y-m-d H:i:s') : null);
+
+            if ($status) {
+                return $this->redirectToRoute("app_dashboard_transcriptions");
+            } else {
+                return $this->redirectToRoute("app_dashboard_create_transcription", [
+                    "name" => $name,
+                    "description" => $description,
+                    "scheduledDate" => $scheduledDateInput,
+                    "deletionDate" => $deletionDateInput,
+                    "isAccessibleAfter" => $isAccessibleAfter,
+                    "allowDownload" => $allowDownload,
+                    "language" => $language,
+                ]);
+            }
+        }
+    }
+    
+
+
+    #[Route("/dashboard/transcriptions/delete/{transcriptionId}", name: "app_dashboard_transcriptions_delete")]
+    public function deleteTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, DeleteUserTranscriptionFunction $deleteUserTranscriptionFunction, $transcriptionId): Response
+    { 
+        if ($request->getMethod() === "GET") {
+            if (!$request->cookies->get("token")) {
+                return $this->redirectToRoute("app_login");
+            } else {
+                $userData = $verifyTokenFunction->verifyToken();
+                $deleteUserTranscriptionFunction->deleteUserTranscription($transcriptionId);
+                return $this->redirectToRoute("app_dashboard_transcriptions");
+            }
+        }
+    }
+
+    #[Route("/dashboard/transcriptions/end/{transcriptionId}", name: "app_dashboard_transcriptions_end")]
+    public function endTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, EndUserTranscriptionFunction $endUserTranscriptionFunction, $transcriptionId, $redirectToMeeting = null): Response
+    { 
+        if ($request->getMethod() === "GET") {
+            if (!$request->cookies->get("token")) {
+                return $this->redirectToRoute("app_login");
+            } else {
+                $userData = $verifyTokenFunction->verifyToken();
+                $endUserTranscriptionFunction->endUserTranscription($transcriptionId);
+                if ($redirectToMeeting) {
+                    return $this->redirectToRoute('app_dashboard_transcriptions_get', ['transcriptionId' => $transcriptionId]);
+                } else {
+                    return $this->redirectToRoute("app_dashboard_transcriptions");
+                }
+                
+            }
+        }
+    }
+
+    #[Route("/dashboard/transcriptions/show/{transcriptionId}", name: "app_dashboard_transcriptions_get")]
+    public function getTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, GetUserTranscriptionFunction $getUserTranscriptionFunction, $transcriptionId): Response
+    { 
+        if ($request->getMethod() === "GET") {
+            if (!$request->cookies->get("token")) {
+                return $this->redirectToRoute("app_login");
+            } else {
+                $userData = $verifyTokenFunction->verifyToken();
+                $return = $getUserTranscriptionFunction->getUserTranscription($transcriptionId);
+                if ($return != null) {
+                    $meeting = $return['meeting'];
+                    return $this->render('dashboard/transcriptions/show.html.twig', [
+                        'meeting' => $meeting
+                    ]);
+                } else {
+                    return $this->redirectToRoute("app_dashboard_transcriptions");
+                }
+
+            }
+        }
+    }
+    
 
     #[Route("/dashboard/settings", name: "app_dashboard_settings")]
     public function settings(Request $request): Response
