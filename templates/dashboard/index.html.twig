@@ -1,0 +1,65 @@
+{% extends "index/index.html.twig" %}
+
+{% block title %}Dashboard - ReadTheVoice
+{% endblock %}
+
+{% block content %}
+
+	<section class="background-radial-gradient overflow-hidden vh-100">
+		<div class="d-flex mt-3 mx-3 justify-content-center align-items-center bg-glass dashboard-content h-87" id="dashboard">
+			<div id="dashboardContent" class="w-100 h-100">
+				{% block dashboardContent %}{% endblock %}
+			</div>
+		</div>
+		<div class="position-fixed mb-2 p-2 start-0 text-center bottom-0 w-100" role="navigation">
+			<div class="smallContainer p-3 shadow-lg rounded bg-glass">
+				<div class="d-flex align-items-center justify-content-around">
+					<a href="{{ path("app_dashboard_transcriptions") }}">
+
+						<div class="d-flex align-items-center justify-content-center navLink" data-bs-toggle="tooltip" data-bs-placement="top" title="Transcriptions">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewbox="0 0 16 16">
+								<path fill-rule="evenodd" d="M0 .5A.5.5 0 0 1 .5 0h4a.5.5 0 0 1 0 1h-4A.5.5 0 0 1 0 .5m0 2A.5.5 0 0 1 .5 2h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m9 0a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-9 2A.5.5 0 0 1 .5 4h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m5 0a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m7 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-12 2A.5.5 0 0 1 .5 6h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m8 0a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-8 2A.5.5 0 0 1 .5 8h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m7 0a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-7 2a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1h-8a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5"/>
+							</svg>
+						</div>
+					</a>
+
+					<a href="{{ path("app_dashboard_settings") }}">
+
+						<div class="d-flex align-items-center justify-content-center navLink" data-bs-toggle="tooltip" data-bs-placement="top" title="Settings">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewbox="0 0 16 16">
+								<path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+							</svg>
+						</div>
+					</a>
+
+					<a href="#logout" id="logOutBtn" data-bs-toggle="modal" data-bs-target="#logOutModal">
+
+						<div class="d-flex align-items-center justify-content-center navLink" data-bs-toggle="tooltip" data-bs-placement="top" title="Log out">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewbox="0 0 16 16">
+								<path d="M12 1a1 1 0 0 1 1 1v13h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V2a1 1 0 0 1 1-1zm-2 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+							</svg>
+						</div>
+					</a>
+
+
+				</div>
+			</div>
+		</div>
+	</section>
+	<div class="modal fade" tabindex="-1" id="logOutModal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content rounded-3 shadow">
+				<div class="modal-body p-4 text-center">
+					<h5 class="mb-0" id="logOutModalLabel">Are you sure you want to log out?</h5>
+					<p class="mb-0">You will be able to reconnect from the login screen afterwards.</p>
+				</div>
+				<div class="modal-footer flex-nowrap p-0">
+					<a type="button" class="btn btn-lg fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end" href="{{ path("app_logout") }}" data-bs-dismiss="modal">
+						<strong>Yes</strong>
+					</a>
+					<button type="button" class="btn btn-lg fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
