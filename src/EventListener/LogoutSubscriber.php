@@ -29,7 +29,9 @@ class LogoutSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         $token = $request->cookies->get("token");
-        $this->logoutFunction->logOut($token);
-        $request->cookies->remove("token");
+        if ($token) {
+            $this->logoutFunction->logOut($token);
+            $request->cookies->remove("token");
+        }
     }
 }
