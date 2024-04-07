@@ -75,7 +75,11 @@ class RegisterController extends AbstractController
             if (!$error) {
                 return $this->render("register/done.html.twig");
             } else {
-                return $this->redirectToRoute("app_register");
+                return $this->redirectToRoute("app_register", [
+                    "firstname" => $firstname,
+                    "lastname" => $lastname,
+                    "email" => $email,
+                ]);
             }
         }
     }
