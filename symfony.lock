@@ -26,6 +26,9 @@
             "migrations/.gitignore"
         ]
     },
+    "endroid/qr-code-bundle": {
+        "version": "5.0.0"
+    },
     "phpunit/phpunit": {
         "version": "9.6",
         "recipe": {

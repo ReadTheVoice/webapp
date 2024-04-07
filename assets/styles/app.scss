@@ -251,6 +251,11 @@ body {
     max-height: 50vh;
 }
 
+.meetings-svg {
+    width: auto;
+    max-height: 20vh;
+}
+
 .dashboard-content {
     overflow-y: auto;
 }
@@ -272,4 +277,49 @@ body {
 
 .modal-backdrop {
     display: none;
+}
+
+@keyframes breathingBackground {
+
+    0%,
+    100% {
+        background-color: #fff;
+    }
+
+    50% {
+        background-color: #ecfce1;
+    }
+}
+
+.state-0 {
+    background-color: #fff;
+}
+
+.state-1 {
+    animation: breathingBackground 5s ease-in-out infinite;
+}
+
+.state-2 {
+    background-color: #ededed;
+}
+
+.dropdown-menu.show {
+    z-index: 300;
+}
+
+.card {
+    width: 18rem;
+    border-radius: 5%;
+    overflow: hidden;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-text {
+    flex-grow: 1;
+    width: 100%;
 }

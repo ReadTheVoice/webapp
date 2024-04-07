@@ -59,6 +59,31 @@ services:
         arguments:
             $accessToken: '%env(ACCESS_TOKEN)%'
             $endpoint: '%env(DELETE_USER_ACCOUNT_FUNCTION_ENDPOINT)%'
+            
+    App\FirebaseFunctions\ListUserMeetingsFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(LIST_MEETINGS_FUNCTION_ENDPOINT)%'
+
+    App\FirebaseFunctions\CreateUserTranscriptionFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(CREATE_TRANSCRIPTION_FUNCTION_ENDPOINT)%'
+
+    App\FirebaseFunctions\DeleteUserTranscriptionFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(DELETE_TRANSCRIPTION_FUNCTION_ENDPOINT)%'    
+            
+    App\FirebaseFunctions\EndUserTranscriptionFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(END_TRANSCRIPTION_FUNCTION_ENDPOINT)%'
+    
+    App\FirebaseFunctions\GetUserTranscriptionFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(GET_TRANSCRIPTION_FUNCTION_ENDPOINT)%'
 
     App\EventListener\LogoutSubscriber:
         tags: [kernel.event_listener]
