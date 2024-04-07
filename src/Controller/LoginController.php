@@ -51,7 +51,10 @@ class LoginController extends AbstractController
             if (!$error) {
                 return $this->redirectToRoute("app_dashboard");
             } else {
-                return $this->redirectToRoute("app_login");
+                return $this->redirectToRoute("app_login", [
+                    "email" => $email,
+                    "remember_me" => $rememberMe,
+                ]);
             }    
         }
     }
