@@ -37,12 +37,12 @@ class VerifyTokenFunction
                 $response = $this->makeRequest($this->endpoint, $data);
 
                 if (isset($response["error"])) {
-                        if (in_array($response["error"], ['TOKEN_EXPIRED', 'TOKEN_INVALID', 'TOKEN_VERIFICATION_ERROR'])) {
-                            $redirectResponse = new RedirectResponse('/logout');
-                            $redirectResponse->send();
-                        } else {
-                            $this->flashBag->add("profile_error", "An error occurred.");
-                        }
+                    if (in_array($response["error"], ['TOKEN_EXPIRED', 'TOKEN_INVALID', 'TOKEN_VERIFICATION_ERROR'])) {
+                        $redirectResponse = new RedirectResponse('/logout');
+                        $redirectResponse->send();
+                    } else {
+                        $this->flashBag->add("profile_error", "An error occurred.");
+                    }
                     $error = true;
                     return $error;
                 } else {
@@ -51,7 +51,7 @@ class VerifyTokenFunction
                     $lastName = $response["lastName"];
                 }
 
-            return [$email, $firstName, $lastName];
+                return [$email, $firstName, $lastName];
         } catch (\Exception $e) {
             throw new \RuntimeException("Firebase VerifyTokenFunction Request Failed: {$e->getMessage()}", $e->getCode(), $e);
         }
@@ -61,12 +61,14 @@ class VerifyTokenFunction
     {
         $httpClient = HttpClient::create();
 
-        $response = $httpClient->request("POST", $endpoint, [
+        $response = $httpClient->request(
+            "POST", $endpoint, [
             "headers" => [
                 "Authorization" => $this->accessToken,
             ],
             "json" => $data,
-        ]);
+            ]
+        );
 
         return $response->toArray();
     }
