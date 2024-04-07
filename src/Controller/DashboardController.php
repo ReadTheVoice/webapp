@@ -38,7 +38,6 @@ class DashboardController extends AbstractController
             if (!$request->cookies->get("token")) {
                 return $this->redirectToRoute("app_login");
             } else {
-                $userData = $verifyTokenFunction->verifyToken();
                 $meetings = $listUserMeetingsFunction->listUserMeetings();
                 return $this->render("dashboard/transcriptions/index.html.twig", ["meetings" => $meetings]);
             }
@@ -151,7 +150,6 @@ class DashboardController extends AbstractController
             if (!$request->cookies->get("token")) {
                 return $this->redirectToRoute("app_login");
             } else {
-                $userData = $verifyTokenFunction->verifyToken();
                 $deleteUserTranscriptionFunction->deleteUserTranscription($transcriptionId);
                 return $this->redirectToRoute("app_dashboard_transcriptions");
             }
@@ -165,7 +163,6 @@ class DashboardController extends AbstractController
             if (!$request->cookies->get("token")) {
                 return $this->redirectToRoute("app_login");
             } else {
-                $userData = $verifyTokenFunction->verifyToken();
                 $endUserTranscriptionFunction->endUserTranscription($transcriptionId);
                 if ($redirectToMeeting) {
                     return $this->redirectToRoute('app_dashboard_transcriptions_get', ['transcriptionId' => $transcriptionId]);
@@ -184,7 +181,6 @@ class DashboardController extends AbstractController
             if (!$request->cookies->get("token")) {
                 return $this->redirectToRoute("app_login");
             } else {
-                $userData = $verifyTokenFunction->verifyToken();
                 $return = $getUserTranscriptionFunction->getUserTranscription($transcriptionId);
                 if ($return != null) {
                     $meeting = $return['meeting'];
