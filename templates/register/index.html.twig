@@ -10,15 +10,15 @@
 					</div>
 				{% endfor %}
 				<div class="form-floating mb-3 pb-1">
-					<input type="text" class="form-control" id="firstname" name="firstname" placeholder="Jane" required>
+					<input type="text" class="form-control" id="firstname" name="firstname" placeholder="Jane" value="{{ app.request.get('firstname')|default("") }}" required>
 					<label for="firstname">First name</label>
 				</div>
 				<div class="form-floating mb-3 pb-1">
-					<input type="text" class="form-control" id="lastname" name="lastname" placeholder="Doe" required>
+					<input type="text" class="form-control" id="lastname" name="lastname" placeholder="Doe" value="{{ app.request.get('lastname')|default("") }}" required>
 					<label for="lastname">Last name</label>
 				</div>
 				<div class="form-floating mb-3 pb-1">
-					<input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+					<input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" value="{{ app.request.get('email')|default("") }}" required>
 					<label for="email">Email address</label>
 				</div>
 				<div class="form-floating mb-3 pb-1">
