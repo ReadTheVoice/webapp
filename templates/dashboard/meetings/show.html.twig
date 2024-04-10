@@ -1,5 +1,7 @@
 {% extends "dashboard/index.html.twig" %}
 
+{% set randomNum = random() %}
+
 {% block title %}
 	{{ meeting.name }}
 	- ReadTheVoice
@@ -9,9 +11,9 @@
 	<div class="p-3">
 		<div class="d-flex flex-row align-items-center">
 			<div>
-				<h1>Transcriptions</h1>
+				<h1>Meetings</h1>
 				<div class="d-flex flex-row align-items-center gap-2">
-					<a href="{{ path('app_dashboard_transcriptions') }}">
+					<a href="{{ path('app_dashboard_transcriptions') }}" id="stopTranscription{{ randomNum }}">
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="d-flex bi bi-arrow-left-circle-fill" viewbox="0 0 16 16">
 							<path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/></svg>
 					</a>
@@ -92,7 +94,7 @@
 						<div class="col-md-6 align-self-center">
 							<p class="fs-3">Time to start transcribing your meeting.</p>
 							<p class="fw-light">Click on the button below to start the transcription.<br>You will need to authorise access to your microphone.</p>
-							<button class="btn btn-primary py-2 mt-2" id="startTranscription">Start your transcription</button>
+							<button class="btn btn-primary py-2 mt-2" id="startTranscription{{ randomNum }}">Start your transcription</button>
 						</div>
 					</div>
 				</div>
@@ -140,7 +142,7 @@
 									<p class="fs-3 mt-2 pd-0 text-center">Your meeting is still listed as in progress but the transcription has been stopped.</p>
 									<p class="fw-light">You can continue transcribing it or end it here.</p>
 									<div class="d-flex flex-row gap-2">
-										<button class="btn btn-primary py-2 mt-2" id="startTranscription">Continue your meeting</button>
+										<button class="btn btn-primary py-2 mt-2" id="startTranscription{{ randomNum }}">Continue your meeting</button>
 										<button class="btn btn-danger py-2 mt-2" data-bs-toggle="modal" data-bs-target="#{{ meeting.id|trim('1234567890', 'left')|lower }}-end-modal">End your meeting</button>
 									</div>
 								</div>
@@ -237,7 +239,7 @@
 						</svg>
 
 						<p class="fs-3 mt-2 pd-0 text-center">Transcript of your meeting in progress.</p>
-						<button class="btn btn-warning py-2 mt-2" id="stopTranscription">Stop your transcription</button>
+						<button class="btn btn-warning py-2 mt-2" id="stopTranscription{{ randomNum }}">Stop your transcription</button>
 					</div>
 
 				</div>
@@ -276,7 +278,7 @@
 						<p class="fs-3 mt-2 pd-0 text-center">Your meeting is still listed as in progress but the transcription has been stopped.</p>
 						<p class="fw-light">You can continue transcribing it or end it here.</p>
 						<div class="d-flex flex-row gap-2">
-							<button class="btn btn-primary py-2 mt-2" id="startTranscription">Continue your meeting</button>
+							<button class="btn btn-primary py-2 mt-2" id="startTranscription{{ randomNum }}">Continue your meeting</button>
 							<button class="btn btn-danger py-2 mt-2" data-bs-toggle="modal" data-bs-target="#{{ meeting.id|trim('1234567890', 'left')|lower }}-end-modal">End your meeting</button>
 						</div>
 					</div>
@@ -395,57 +397,71 @@
 let mediaRecorder = null;
 let socket = null;
 
-document.getElementById('startTranscription').addEventListener('click', async () => {
-try {
-const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-mediaRecorder = new MediaRecorder(stream);
-socket = new WebSocket(`ws://{{ transcription_service_host }}:{{ transcription_service_port }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.cookies.get('token') }}`);
-
-socket.onopen = () => {
-document.getElementById('meeting-recording').style.display = 'block';
-document.getElementById('meeting-transcription').style.display = 'none';
-document.getElementById('meeting-in-recording').style.display = 'flex';
-document.getElementById('meeting-pause-recording').style.display = 'none';
-
-mediaRecorder.addEventListener('dataavailable', async (event) => {
-if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
-socket.send(event.data);
-}
-});
-mediaRecorder.start(250);
-};
-
+document.body.addEventListener('click', function(event) {
+    if (event.target.id === 'startTranscription{{ randomNum }}') {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+				
+                 mediaRecorder = new MediaRecorder(stream);
+            socket = new WebSocket(`ws://{{ transcription_service_host }}:{{ transcription_service_port }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.cookies.get('token') }}`);
+			console.log(socket.url);
 let meetingTranscriptionData = document.getElementById('meeting-transcription-data');
-let dashboard = document.getElementById('dashboard');
 
-socket.onmessage = (message) => {
+                let dashboard = document.getElementById('dashboard');
+                socket.onopen = () => {
+                    let meetingRecording = document.getElementById('meeting-recording');
+                    let meetingTranscription = document.getElementById('meeting-transcription');
+                    let meetingInRecording = document.getElementById('meeting-in-recording');
+                    let meetingPauseRecording = document.getElementById('meeting-pause-recording');
 
-const received = message.data;
-if (received) {
-meetingTranscriptionData.textContent = received;
-dashboard.scrollTop = meetingTranscriptionData.scrollHeight;
-}
-};
+                    if (meetingRecording) meetingRecording.style.display = 'block';
+                    if (meetingTranscription) meetingTranscription.style.display = 'none';
+                    if (meetingInRecording) meetingInRecording.style.display = 'flex';
+                    if (meetingPauseRecording) meetingPauseRecording.style.display = 'none';
 
-socket.onerror = (error) => console.log({event: 'onerror', error});
-} catch (error) {
-console.error(error);
-}
-});
+                    mediaRecorder.addEventListener('dataavailable', (event) => {
+                        if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
+                            socket.send(event.data);
+                        }
+                    });
+                    mediaRecorder.start(250);
+                };
 
-document.getElementById('stopTranscription').addEventListener('click', async () => {
-if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                
+                socket.onmessage = (message) => {
+                    let received = message.data;
+                    if (received && meetingTranscriptionData) {
+                        meetingTranscriptionData.textContent = received;
+                        if (dashboard) {
+                            dashboard.scrollTop = meetingTranscriptionData.scrollHeight;
+                        }
+                    }
+                };
+
+                socket.onerror = (error) => console.log({ event: 'onerror', error });
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    } 
+	 if (event.target.id === 'stopTranscription{{ randomNum }}') {
+		if (mediaRecorder && mediaRecorder.state !== 'inactive') {
 mediaRecorder.stop();
 mediaRecorder.stream.getTracks().forEach(track => track.stop());
-}
-
 document.getElementById('meeting-in-recording').style.display = 'none';
 if (document.getElementById('meeting-transcription-data').textContent.length > 0) {
 document.getElementById('meeting-pause-recording').style.display = 'flex';
 } else {
 document.getElementById('meeting-transcription').style.display = 'block';
 }
+}
+
+
+	}
+
+
 });
+
 
 })();
 	</script>

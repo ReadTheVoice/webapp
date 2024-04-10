@@ -1,14 +1,14 @@
 {% extends "dashboard/index.html.twig" %}
 
-{% block title %}Transcriptions - ReadTheVoice
+{% block title %}Meetings - ReadTheVoice
 {% endblock %}
 
 {% block dashboardContent %}
 	<div class="p-3">
 		{% if meetings is defined and meetings is not empty %}
 			<div class="d-flex flex-row align-items-center">
-				<h1>Transcriptions</h1>
-				<a type="button" class="btn btn-primary ms-auto" href="{{ path("app_dashboard_create_transcription") }}">Create transcription</a>
+				<h1>Meetings</h1>
+				<a type="button" class="btn btn-primary ms-auto" href="{{ path("app_dashboard_create_transcription") }}">Create meeting</a>
 			</div>
 		{% else %}
 			<h1>Transcriptions</h1>
@@ -72,7 +72,7 @@
 									{% endif %}
 									<p class="card-text">{{ meeting.description }}</p>
 									<a href="{{ path('app_dashboard_transcriptions_get', {transcriptionId: meeting.id}) }}" class="btn btn-primary w-100">
-										View transcription
+										View meeting
 									</a>
 
 									<div align="center"></div>

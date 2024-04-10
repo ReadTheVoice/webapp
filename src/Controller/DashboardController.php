@@ -21,7 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class DashboardController extends AbstractController
 {
-    #[Route("/dashboard", name: "app_dashboard")]
+    #[Route("", name: "app_dashboard")]
     public function index(Request $request): Response
     {
         if (!$request->cookies->get("token")) {
@@ -31,7 +31,7 @@ class DashboardController extends AbstractController
         }
     }
 
-    #[Route("/dashboard/transcriptions", name: "app_dashboard_transcriptions")]
+    #[Route("/meetings", name: "app_dashboard_transcriptions")]
     public function transcriptions(Request $request, VerifyTokenFunction $verifyTokenFunction, ListUserMeetingsFunction $listUserMeetingsFunction): Response
     { 
         if ($request->getMethod() === "GET") {
@@ -39,12 +39,12 @@ class DashboardController extends AbstractController
                 return $this->redirectToRoute("app_login");
             } else {
                 $meetings = $listUserMeetingsFunction->listUserMeetings();
-                return $this->render("dashboard/transcriptions/index.html.twig", ["meetings" => $meetings]);
+                return $this->render("dashboard/meetings/index.html.twig", ["meetings" => $meetings]);
             }
         }
     }
 
-    #[Route("/dashboard/transcriptions/create", name: "app_dashboard_create_transcription")]
+    #[Route("/meetings/create", name: "app_dashboard_create_transcription")]
     public function createTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, CreateUserTranscriptionFunction $createUserTranscriptionFunction, ValidatorInterface $validator): Response
     {
         if ($request->getMethod() === "GET") {
@@ -52,7 +52,7 @@ class DashboardController extends AbstractController
                 return $this->redirectToRoute("app_login");
             } else {
                 $userData = $verifyTokenFunction->verifyToken();
-                return $this->render("dashboard/transcriptions/create.html.twig");
+                return $this->render("dashboard/meetings/create.html.twig");
             }
         } else if ($request->getMethod() === "POST") {
             $token = $request->request->get("token");
@@ -143,7 +143,7 @@ class DashboardController extends AbstractController
     
 
 
-    #[Route("/dashboard/transcriptions/delete/{transcriptionId}", name: "app_dashboard_transcriptions_delete")]
+    #[Route("/meetings/delete/{transcriptionId}", name: "app_dashboard_transcriptions_delete")]
     public function deleteTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, DeleteUserTranscriptionFunction $deleteUserTranscriptionFunction, $transcriptionId): Response
     { 
         if ($request->getMethod() === "GET") {
@@ -156,7 +156,7 @@ class DashboardController extends AbstractController
         }
     }
 
-    #[Route("/dashboard/transcriptions/end/{transcriptionId}", name: "app_dashboard_transcriptions_end")]
+    #[Route("/meetings/end/{transcriptionId}", name: "app_dashboard_transcriptions_end")]
     public function endTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, EndUserTranscriptionFunction $endUserTranscriptionFunction, $transcriptionId, $redirectToMeeting = null): Response
     { 
         if ($request->getMethod() === "GET") {
@@ -174,7 +174,7 @@ class DashboardController extends AbstractController
         }
     }
 
-    #[Route("/dashboard/transcriptions/show/{transcriptionId}", name: "app_dashboard_transcriptions_get")]
+    #[Route("/meetings/view/{transcriptionId}", name: "app_dashboard_transcriptions_get")]
     public function getTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, GetUserTranscriptionFunction $getUserTranscriptionFunction, $transcriptionId): Response
     { 
         if ($request->getMethod() === "GET") {
@@ -184,7 +184,7 @@ class DashboardController extends AbstractController
                 $return = $getUserTranscriptionFunction->getUserTranscription($transcriptionId);
                 if ($return != null) {
                     $meeting = $return['meeting'];
-                    return $this->render('dashboard/transcriptions/show.html.twig', [
+                    return $this->render('dashboard/meetings/show.html.twig', [
                         'meeting' => $meeting
                     ]);
                 } else {
@@ -196,7 +196,7 @@ class DashboardController extends AbstractController
     }
     
 
-    #[Route("/dashboard/settings", name: "app_dashboard_settings")]
+    #[Route("/settings", name: "app_dashboard_settings")]
     public function settings(Request $request): Response
     {
         if (!$request->cookies->get("token")) {
@@ -206,7 +206,7 @@ class DashboardController extends AbstractController
         }
     }
 
-    #[Route("/dashboard/settings/profile", name: "app_dashboard_settings_profile")]
+    #[Route("/settings/profile", name: "app_dashboard_settings_profile")]
     public function settingsProfile(Request $request, VerifyTokenFunction $verifyTokenFunction, UpdateUserProfileFunction $updateUserProfileFonction, ValidatorInterface $validator): Response
     {
         if ($request->getMethod() === "GET") {
@@ -274,7 +274,7 @@ class DashboardController extends AbstractController
         }
     }
 
-    #[Route("/dashboard/settings/email", name: "app_dashboard_settings_email")]
+    #[Route("/settings/email", name: "app_dashboard_settings_email")]
     public function settingsEmail(Request $request, VerifyTokenFunction $verifyTokenFunction, UpdateUserEmailFunction $updateUserEmailFunction, ValidatorInterface $validator): Response
     {
         if ($request->getMethod() === "GET") {
@@ -317,7 +317,7 @@ class DashboardController extends AbstractController
         }
     }
 
-    #[Route("/dashboard/settings/password", name: "app_dashboard_settings_password")]
+    #[Route("/settings/password", name: "app_dashboard_settings_password")]
     public function settingsPassword(Request $request, VerifyTokenFunction $verifyTokenFunction, ResetPasswordFunction $resetPasswordFunction, ValidatorInterface $validator): Response
     {
         if ($request->getMethod() === "GET") {
@@ -360,7 +360,7 @@ class DashboardController extends AbstractController
         }   
     }
 
-    #[Route("/dashboard/settings/deleteaccount", name: "app_dashboard_settings_delete_account")]
+    #[Route("/settings/deleteaccount", name: "app_dashboard_settings_delete_account")]
     public function settingsDeleteAccount(Request $request, VerifyTokenFunction $verifyTokenFunction, DeleteUserAccountFunction $deleteUserAccountFunction): Response
     {
 
