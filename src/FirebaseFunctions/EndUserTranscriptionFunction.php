@@ -51,7 +51,7 @@ class EndUserTranscriptionFunction
 
             if (isset($response["message"]) && ($response["message"] === "MEETING_DELETED")) {
                 $this->flashBag->add("meetings_success", "Meeting ended and transcription deleted successfully.");
-                $redirectResponse = new RedirectResponse('/dashboard');
+                $redirectResponse = new RedirectResponse('/meetings');
                 $redirectResponse->send();
             }
 
