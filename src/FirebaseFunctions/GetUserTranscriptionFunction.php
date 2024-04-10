@@ -17,6 +17,7 @@ class GetUserTranscriptionFunction
         $this->accessToken = $accessToken;
         $this->endpoint = $endpoint;
         $this->requestStack = $requestStack;
+        $this->session = $this->requestStack->getSession();
         $this->flashBag = $this->requestStack->getSession()->getFlashBag();
     }
 
@@ -24,7 +25,7 @@ class GetUserTranscriptionFunction
     {
         try {
             $request = $this->requestStack->getCurrentRequest();
-            $token = $request->cookies->get("token");
+            $token = $this->session->get("jwtToken");
 
             $data = [
                 "token" => $token,
@@ -34,8 +35,8 @@ class GetUserTranscriptionFunction
             $response = $this->makeRequest($this->endpoint, $data);
             
             if (isset($response["error"])) {
-                if (in_array($response["error"], ['TOKEN_EXPIRED', 'TOKEN_INVALID', 'TOKEN_VERIFICATION_ERROR'])) {
-                    $redirectResponse = new RedirectResponse('/logout');
+                if (in_array($response["error"], ["TOKEN_EXPIRED", "TOKEN_INVALID", "TOKEN_VERIFICATION_ERROR"])) {
+                    $redirectResponse = new RedirectResponse("/logout");
                     $redirectResponse->send();
                     throw new \RuntimeException("Firebase GetUserTranscription Request Failed: Token Expired", 401);
                     return null;
@@ -52,21 +53,21 @@ class GetUserTranscriptionFunction
             if (isset($response["meeting"])) {
                 
                 if (isset($response["meeting"]["createdAt"])) {
-                    $timestamp = $response["meeting"]["createdAt"]['_seconds'] * 1000 + round($response["meeting"]["createdAt"]['_nanoseconds'] / 1000000);
+                    $timestamp = $response["meeting"]["createdAt"]["_seconds"] * 1000 + round($response["meeting"]["createdAt"]["_nanoseconds"] / 1000000);
                     $response["meeting"]["createdAtString"] = date("d/m/Y H:i", $timestamp / 1000);
                 } else {
                     $response["meeting"]["createdAtString"] = "N/A";
                 }
             
                 if (isset($response["meeting"]["endDate"]) && $response["meeting"]["endDate"] != null) {
-                    $timestamp = $response["meeting"]["endDate"]['_seconds'] * 1000 + round($response["meeting"]["endDate"]['_nanoseconds'] / 1000000);
+                    $timestamp = $response["meeting"]["endDate"]["_seconds"] * 1000 + round($response["meeting"]["endDate"]["_nanoseconds"] / 1000000);
                     $response["meeting"]["endDateString"] = date("d/m/Y H:i", $timestamp / 1000);
                 } else {
                     $response["meeting"]["endDateString"] = "N/A";
                 }
                 
                 if (isset($response["meeting"]["scheduledDate"]) && $response["meeting"]["scheduledDate"] != null) {
-                    $timestamp = $response["meeting"]["scheduledDate"]['_seconds'] * 1000 + round($response["meeting"]["scheduledDate"]['_nanoseconds'] / 1000000);
+                    $timestamp = $response["meeting"]["scheduledDate"]["_seconds"] * 1000 + round($response["meeting"]["scheduledDate"]["_nanoseconds"] / 1000000);
                     $response["meeting"]["scheduledDateString"] = date("d/m/Y H:i", $timestamp / 1000);
                 } else {
                     $response["meeting"]["scheduledDateString"] = "N/A";
@@ -74,7 +75,7 @@ class GetUserTranscriptionFunction
 
                                 
                 if (isset($response["meeting"]["deletionDate"]) && $response["meeting"]["deletionDate"] != null) {
-                    $timestamp = $response["meeting"]["deletionDate"]['_seconds'] * 1000 + round($response["meeting"]["deletionDate"]['_nanoseconds'] / 1000000);
+                    $timestamp = $response["meeting"]["deletionDate"]["_seconds"] * 1000 + round($response["meeting"]["deletionDate"]["_nanoseconds"] / 1000000);
                     $response["meeting"]["deletionDateString"] = date("d/m/Y H:i", $timestamp / 1000);
                 } else {
                     $response["meeting"]["deletionDateString"] = "N/A";

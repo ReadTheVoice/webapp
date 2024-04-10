@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ResetPasswordController extends AbstractController
 {
-    #[Route("/resetpassword", name: "app_reset_password")]
+    #[Route("/reset", name: "app_reset_password")]
     public function index(Request $request, ResetPasswordFunction $resetPasswordFunction, ValidatorInterface $validator ): Response
     {
         if ($request->getMethod() === "GET") {

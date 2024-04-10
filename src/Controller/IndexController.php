@@ -13,7 +13,7 @@ class IndexController extends AbstractController
     #[Route("/", name: "app_index")]
     public function index(Request $request): Response
     {
-        if (!$request->cookies->get("token")) {
+        if (!$request->getSession()->get("jwtToken")) {
             return $this->redirectToRoute("app_login");
         } else {
             return $this->redirectToRoute("app_dashboard");

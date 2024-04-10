@@ -17,6 +17,7 @@ class ListUserMeetingsFunction
         $this->accessToken = $accessToken;
         $this->endpoint = $endpoint;
         $this->requestStack = $requestStack;
+        $this->session = $this->requestStack->getSession();
         $this->flashBag = $this->requestStack->getSession()->getFlashBag();
     }
 
@@ -24,7 +25,7 @@ class ListUserMeetingsFunction
     {
         try {
             $request = $this->requestStack->getCurrentRequest();
-            $token = $request->cookies->get("token");
+            $token = $this->session->get("jwtToken");
 
             $data = [
                 "token" => $token,
@@ -33,8 +34,8 @@ class ListUserMeetingsFunction
             $response = $this->makeRequest($this->endpoint, $data);
 
             if (isset($response["error"])) {
-                if (in_array($response["error"], ['TOKEN_EXPIRED', 'TOKEN_INVALID', 'TOKEN_VERIFICATION_ERROR'])) {
-                    $redirectResponse = new RedirectResponse('/logout');
+                if (in_array($response["error"], ["TOKEN_EXPIRED", "TOKEN_INVALID", "TOKEN_VERIFICATION_ERROR"])) {
+                    $redirectResponse = new RedirectResponse("/logout");
                     $redirectResponse->send();
                     return null;
                 } else {
@@ -46,21 +47,21 @@ class ListUserMeetingsFunction
             if (isset($response["meetings"])) {
                 foreach ($response["meetings"] as &$meeting) {
                     if (isset($meeting["createdAt"])) {
-                        $timestamp = $meeting["createdAt"]['_seconds'] * 1000 + round($meeting["createdAt"]['_nanoseconds'] / 1000000);
+                        $timestamp = $meeting["createdAt"]["_seconds"] * 1000 + round($meeting["createdAt"]["_nanoseconds"] / 1000000);
                         $meeting["createdAtString"] = date("d/m/Y H:i", $timestamp / 1000);;
                     } else {
                         $meeting["createdAtString"] = "N/A";
                     }
 
                     if (isset($meeting["scheduledDate"]) && $meeting["scheduledDate"] != null) {
-                        $timestamp = $meeting["scheduledDate"]['_seconds'] * 1000 + round($meeting["scheduledDate"]['_nanoseconds'] / 1000000);
+                        $timestamp = $meeting["scheduledDate"]["_seconds"] * 1000 + round($meeting["scheduledDate"]["_nanoseconds"] / 1000000);
                         $meeting["scheduledDateString"] = date("d/m/Y H:i", $timestamp / 1000);
                     } else {
                         $meeting["scheduledDateString"] = "N/A";
                     }
                 
                     if (isset($meeting["endDate"])) {
-                        $timestamp = $meeting["endDate"]['_seconds'] * 1000 + round($meeting["endDate"]['_nanoseconds'] / 1000000);
+                        $timestamp = $meeting["endDate"]["_seconds"] * 1000 + round($meeting["endDate"]["_nanoseconds"] / 1000000);
                         $meeting["endDateString"] = date("d/m/Y H:i", $timestamp);
                     } else {
                         $meeting["endDateString"] = "N/A";

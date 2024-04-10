@@ -28,10 +28,10 @@ class LogoutSubscriber implements EventSubscriberInterface
     public function onLogout(LogoutEvent $event): void
     {
         $request = $event->getRequest();
-        $token = $request->cookies->get("token");
+        $token = $request->getSession()->get("jwtToken");
         if ($token) {
             $this->logoutFunction->logOut($token);
-            $request->cookies->remove("token");
+            $request->getSession()->clear();
         }
     }
 }

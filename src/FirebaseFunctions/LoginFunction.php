@@ -2,11 +2,9 @@
 
 namespace App\FirebaseFunctions;
 
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Response;
-
 
 class LoginFunction
 {
@@ -14,13 +12,15 @@ class LoginFunction
     private $endpoint;
     protected $requestStack;
     protected $flashBag;
+    protected $session;
 
     public function __construct(string $accessToken, string $endpoint, RequestStack $requestStack)
     {
         $this->accessToken = $accessToken;
         $this->endpoint = $endpoint;
         $this->requestStack = $requestStack;
-        $this->flashBag = $this->requestStack->getSession()->getFlashBag();
+        $this->session = $this->requestStack->getSession();
+        $this->flashBag = $this->session->getFlashBag();
     }
 
     public function logIn(string $email, string $password, bool $rememberMe)
@@ -35,7 +35,7 @@ class LoginFunction
             }
 
             if (isset($response["jwtToken"])) {
-                return $this->createResponseWithCookie($response["jwtToken"], $rememberMe);
+                return $this->createResponseWithSession($response["jwtToken"], $rememberMe);
             }
             return null;
         } catch (\Exception $e) {
@@ -53,12 +53,12 @@ class LoginFunction
         return $response->toArray();
     }
 
-    private function createResponseWithCookie(string $jwtToken, bool $rememberMe)
+    private function createResponseWithSession(string $jwtToken, bool $rememberMe)
     {
-        $time = $rememberMe ? strtotime("+1 year") : strtotime("+1 day");
-        $cookie = new Cookie("token", $jwtToken, $time);
+        $time = $rememberMe ? "+1 year" : "+1 day";
+        $this->session->set("jwtToken", $jwtToken);
+        $this->session->migrate(true, strtotime($time));
         $response = new Response();
-        $response->headers->setCookie($cookie);
         return $response;
     }
 

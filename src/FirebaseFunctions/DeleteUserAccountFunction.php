@@ -19,6 +19,7 @@ class DeleteUserAccountFunction
         $this->accessToken = $accessToken;
         $this->endpoint = $endpoint;
         $this->requestStack = $requestStack;
+        $this->session = $this->requestStack->getSession();
         $this->flashBag = $this->requestStack->getSession()->getFlashBag();
     }
 
@@ -27,7 +28,7 @@ class DeleteUserAccountFunction
         try {
 
             $request = $this->requestStack->getCurrentRequest();
-            $token = $request->cookies->get("token");
+            $token = $this->session->get("jwtToken");
             
             $data = [
                 "token" => $token
@@ -36,8 +37,8 @@ class DeleteUserAccountFunction
             $response = $this->makeRequest($this->endpoint, $data);
 
             if (isset($response["error"])) {
-                if (in_array($response["error"], ['TOKEN_EXPIRED', 'TOKEN_INVALID', 'TOKEN_VERIFICATION_ERROR'])) {
-                    $redirectResponse = new RedirectResponse('/logout');
+                if (in_array($response["error"], ["TOKEN_EXPIRED", "TOKEN_INVALID", "TOKEN_VERIFICATION_ERROR"])) {
+                    $redirectResponse = new RedirectResponse("/logout");
                     $redirectResponse->send();
                 } else {
                     if ($response["error"] === "USER_NOT_FOUND") {

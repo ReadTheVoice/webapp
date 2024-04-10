@@ -24,7 +24,7 @@ class DashboardController extends AbstractController
     #[Route("", name: "app_dashboard")]
     public function index(Request $request): Response
     {
-        if (!$request->cookies->get("token")) {
+        if (!$request->getSession()->get("jwtToken")) {
             return $this->redirectToRoute("app_login");
         } else {
             return $this->redirectToRoute("app_dashboard_transcriptions");
@@ -35,7 +35,7 @@ class DashboardController extends AbstractController
     public function transcriptions(Request $request, VerifyTokenFunction $verifyTokenFunction, ListUserMeetingsFunction $listUserMeetingsFunction): Response
     { 
         if ($request->getMethod() === "GET") {
-            if (!$request->cookies->get("token")) {
+            if (!$request->getSession()->get("jwtToken")) {
                 return $this->redirectToRoute("app_login");
             } else {
                 $meetings = $listUserMeetingsFunction->listUserMeetings();
@@ -48,7 +48,7 @@ class DashboardController extends AbstractController
     public function createTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, CreateUserTranscriptionFunction $createUserTranscriptionFunction, ValidatorInterface $validator): Response
     {
         if ($request->getMethod() === "GET") {
-            if (!$request->cookies->get("token")) {
+            if (!$request->getSession()->get("jwtToken")) {
                 return $this->redirectToRoute("app_login");
             } else {
                 $userData = $verifyTokenFunction->verifyToken();
@@ -147,7 +147,7 @@ class DashboardController extends AbstractController
     public function deleteTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, DeleteUserTranscriptionFunction $deleteUserTranscriptionFunction, $transcriptionId): Response
     { 
         if ($request->getMethod() === "GET") {
-            if (!$request->cookies->get("token")) {
+            if (!$request->getSession()->get("jwtToken")) {
                 return $this->redirectToRoute("app_login");
             } else {
                 $deleteUserTranscriptionFunction->deleteUserTranscription($transcriptionId);
@@ -160,7 +160,7 @@ class DashboardController extends AbstractController
     public function endTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, EndUserTranscriptionFunction $endUserTranscriptionFunction, $transcriptionId, $redirectToMeeting = null): Response
     { 
         if ($request->getMethod() === "GET") {
-            if (!$request->cookies->get("token")) {
+            if (!$request->getSession()->get("jwtToken")) {
                 return $this->redirectToRoute("app_login");
             } else {
                 $endUserTranscriptionFunction->endUserTranscription($transcriptionId);
@@ -178,7 +178,7 @@ class DashboardController extends AbstractController
     public function getTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, GetUserTranscriptionFunction $getUserTranscriptionFunction, $transcriptionId): Response
     { 
         if ($request->getMethod() === "GET") {
-            if (!$request->cookies->get("token")) {
+            if (!$request->getSession()->get("jwtToken")) {
                 return $this->redirectToRoute("app_login");
             } else {
                 $return = $getUserTranscriptionFunction->getUserTranscription($transcriptionId);
@@ -199,7 +199,7 @@ class DashboardController extends AbstractController
     #[Route("/settings", name: "app_dashboard_settings")]
     public function settings(Request $request): Response
     {
-        if (!$request->cookies->get("token")) {
+        if (!$request->getSession()->get("jwtToken")) {
             
         } else {
             return $this->redirectToRoute("app_dashboard_settings_profile");

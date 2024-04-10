@@ -17,6 +17,7 @@ class EndUserTranscriptionFunction
         $this->accessToken = $accessToken;
         $this->endpoint = $endpoint;
         $this->requestStack = $requestStack;
+        $this->session = $this->requestStack->getSession();
         $this->flashBag = $this->requestStack->getSession()->getFlashBag();
     }
 
@@ -24,7 +25,7 @@ class EndUserTranscriptionFunction
     {
         try {
             $request = $this->requestStack->getCurrentRequest();
-            $token = $request->cookies->get("token");
+            $token = $this->session->get("jwtToken");
 
             $data = [
                 "token" => $token,
@@ -34,8 +35,8 @@ class EndUserTranscriptionFunction
             $response = $this->makeRequest($this->endpoint, $data);
 
             if (isset($response["error"])) {
-                if (in_array($response["error"], ['TOKEN_EXPIRED', 'TOKEN_INVALID', 'TOKEN_VERIFICATION_ERROR'])) {
-                    $redirectResponse = new RedirectResponse('/logout');
+                if (in_array($response["error"], ["TOKEN_EXPIRED", "TOKEN_INVALID", "TOKEN_VERIFICATION_ERROR"])) {
+                    $redirectResponse = new RedirectResponse("/logout");
                     $redirectResponse->send();
                     return null;
                 } else if ($response["error"] == "MEETING_NOT_FOUND"){
@@ -51,7 +52,7 @@ class EndUserTranscriptionFunction
 
             if (isset($response["message"]) && ($response["message"] === "MEETING_DELETED")) {
                 $this->flashBag->add("meetings_success", "Meeting ended and transcription deleted successfully.");
-                $redirectResponse = new RedirectResponse('/meetings');
+                $redirectResponse = new RedirectResponse("/dashboard");
                 $redirectResponse->send();
             }
 
