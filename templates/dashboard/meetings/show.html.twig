@@ -425,7 +425,7 @@
 					
                     // Initialize MediaRecorder
                     mediaRecorder = new MediaRecorder(stream);
-                    socket = new WebSocket(`ws://{{ transcription_service_host }}:{{ transcription_service_port }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.cookies.get('token') }}`);
+                    socket = new WebSocket(`wss://{{ transcription_service_host }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.cookies.get('token') }}`);
 
                     const meetingTranscriptionData = document.getElementById('meeting-transcription-data');
                     const dashboard = document.getElementById('dashboard');
