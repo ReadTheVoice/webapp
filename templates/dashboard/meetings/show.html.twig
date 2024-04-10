@@ -405,11 +405,9 @@
     let socket = null;
 
     document.body.addEventListener('click', function(event) {
-        // Handler for starting the transcription
         if (event.target.id === 'startTranscription{{ randomNum }}') {
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(stream => {
-                    // Cache DOM references
                     const meetingRecording = document.getElementById('meeting-recording');
                     const loadingSpinner = document.getElementById('loading');
                     const meetingTranscription = document.getElementById('meeting-transcription');
@@ -423,7 +421,7 @@
                     if (loadingSpinner) loadingSpinner.style.display = 'flex';
 					
                     mediaRecorder = new MediaRecorder(stream);
-                    socket = new WebSocket(`wss://{{ transcription_service_host }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.cookies.get('token') }}`);
+                    socket = new WebSocket(`wss://{{ transcription_service_host }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.session.get('jwtToken') }}`);
 
                     const meetingTranscriptionData = document.getElementById('meeting-transcription-data');
                     const dashboard = document.getElementById('dashboard');
