@@ -290,6 +290,14 @@
 </div>
 
 
+	<div class="flex-column justify-content-center align-items-center" id="loading" style="display:none;">
+		<svg class="spinner" width="60px" height="60px" viewbox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+			<circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+		</svg>
+		<span class="visually-hidden">Loading...</span>
+	</div>
+
+
 <div class="modal fade" tabindex="-1" id="{{ meeting.id|trim('1234567890', 'left')|lower }}-qrcode-modal">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content rounded-3 shadow">
@@ -392,76 +400,87 @@
 </div>
 {% if not meeting.isFinished %}
 	<script>
-		(() => {
+(() => {
+    let mediaRecorder = null;
+    let socket = null;
 
-let mediaRecorder = null;
-let socket = null;
+    document.body.addEventListener('click', function(event) {
+        // Handler for starting the transcription
+        if (event.target.id === 'startTranscription{{ randomNum }}') {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    // Cache DOM references
+                    const meetingRecording = document.getElementById('meeting-recording');
+                    const loadingSpinner = document.getElementById('loading');
+                    const meetingTranscription = document.getElementById('meeting-transcription');
+                    const meetingInRecording = document.getElementById('meeting-in-recording');
+                    const meetingPauseRecording = document.getElementById('meeting-pause-recording');
 
-document.body.addEventListener('click', function(event) {
-    if (event.target.id === 'startTranscription{{ randomNum }}') {
-        navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(stream => {
-				
-                 mediaRecorder = new MediaRecorder(stream);
-            socket = new WebSocket(`ws://{{ transcription_service_host }}:{{ transcription_service_port }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.cookies.get('token') }}`);
-let meetingTranscriptionData = document.getElementById('meeting-transcription-data');
-
-                let dashboard = document.getElementById('dashboard');
-                socket.onopen = () => {
-                    let meetingRecording = document.getElementById('meeting-recording');
-                    let meetingTranscription = document.getElementById('meeting-transcription');
-                    let meetingInRecording = document.getElementById('meeting-in-recording');
-                    let meetingPauseRecording = document.getElementById('meeting-pause-recording');
-
-                    if (meetingRecording) meetingRecording.style.display = 'block';
+                    // Initial UI adjustments
                     if (meetingTranscription) meetingTranscription.style.display = 'none';
-                    if (meetingInRecording) meetingInRecording.style.display = 'flex';
+					if (meetingRecording) meetingRecording.style.display = 'none';
+                        if (meetingInRecording) meetingInRecording.style.display = 'none';
                     if (meetingPauseRecording) meetingPauseRecording.style.display = 'none';
+                    if (loadingSpinner) loadingSpinner.style.display = 'flex';
+					
+                    // Initialize MediaRecorder
+                    mediaRecorder = new MediaRecorder(stream);
+                    socket = new WebSocket(`ws://{{ transcription_service_host }}:{{ transcription_service_port }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.cookies.get('token') }}`);
 
-                    mediaRecorder.addEventListener('dataavailable', (event) => {
-                        if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
-                            socket.send(event.data);
+                    const meetingTranscriptionData = document.getElementById('meeting-transcription-data');
+                    const dashboard = document.getElementById('dashboard');
+
+                    socket.onopen = () => {
+                        if (meetingRecording) meetingRecording.style.display = 'block';
+                        if (meetingInRecording) meetingInRecording.style.display = 'flex';
+                        if (loadingSpinner) loadingSpinner.style.display = 'none';
+
+                        mediaRecorder.addEventListener('dataavailable', (event) => {
+                            if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
+                                socket.send(event.data);
+                            }
+                        });
+                        mediaRecorder.start(100);
+                    };
+
+                    socket.onmessage = (message) => {
+                        const received = message.data;
+                        if (received && meetingTranscriptionData) {
+                            meetingTranscriptionData.textContent = received;
+                            if (dashboard) {
+                                dashboard.scrollTop = meetingTranscriptionData.scrollHeight;
+                            }
                         }
-                    });
-                    mediaRecorder.start(250);
-                };
+                    };
 
-                
-                socket.onmessage = (message) => {
-                    let received = message.data;
-                    if (received && meetingTranscriptionData) {
-                        meetingTranscriptionData.textContent = received;
-                        if (dashboard) {
-                            dashboard.scrollTop = meetingTranscriptionData.scrollHeight;
-                        }
-                    }
-                };
+                    socket.onerror = (error) => {
+                        console.error('WebSocket Error:', error);
+                    };
+                })
+                .catch(error => {
+                    console.error('getUserMedia Error:', error);
+                });
+        }
 
-                socket.onerror = (error) => console.log({ event: 'onerror', error });
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    } 
-	 if (event.target.id === 'stopTranscription{{ randomNum }}') {
-		if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-mediaRecorder.stop();
-mediaRecorder.stream.getTracks().forEach(track => track.stop());
-document.getElementById('meeting-in-recording').style.display = 'none';
-if (document.getElementById('meeting-transcription-data').textContent.length > 0) {
-document.getElementById('meeting-pause-recording').style.display = 'flex';
-} else {
-document.getElementById('meeting-transcription').style.display = 'block';
-}
-}
+        if (event.target.id === 'stopTranscription{{ randomNum }}') {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                document.getElementById('meeting-in-recording').style.display = 'none';
 
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.close(1000, "Normal Closure");
+                }
 
-	}
-
-
-});
-
-
+                const transcriptionData = document.getElementById('meeting-transcription-data').textContent;
+                if (transcriptionData.length > 0) {
+                    document.getElementById('meeting-pause-recording').style.display = 'flex';
+                } else {
+                    document.getElementById('meeting-transcription').style.display = 'block';
+                }
+            }
+        }
+    });
 })();
 	</script>
 {% endif %}{% endblock %}
