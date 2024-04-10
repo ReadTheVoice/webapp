@@ -416,14 +416,12 @@
                     const meetingInRecording = document.getElementById('meeting-in-recording');
                     const meetingPauseRecording = document.getElementById('meeting-pause-recording');
 
-                    // Initial UI adjustments
                     if (meetingTranscription) meetingTranscription.style.display = 'none';
 					if (meetingRecording) meetingRecording.style.display = 'none';
                         if (meetingInRecording) meetingInRecording.style.display = 'none';
                     if (meetingPauseRecording) meetingPauseRecording.style.display = 'none';
                     if (loadingSpinner) loadingSpinner.style.display = 'flex';
 					
-                    // Initialize MediaRecorder
                     mediaRecorder = new MediaRecorder(stream);
                     socket = new WebSocket(`wss://{{ transcription_service_host }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.cookies.get('token') }}`);
 
