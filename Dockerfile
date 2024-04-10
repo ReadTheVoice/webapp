@@ -14,8 +14,13 @@ RUN npm run build
 FROM php:8.1-apache
 RUN apt-get update && apt-get install -y \
     acl \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
     && rm -rf /var/lib/apt/lists/*
-RUN docker-php-ext-install pdo
+RUN docker-php-ext-install -j$(nproc) pdo
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-install -j$(nproc) gd
 ENV APP_ENV=prod
 WORKDIR /var/www/project/
 COPY --from=composer-install /app/vendor /var/www/project/vendor
@@ -25,6 +30,6 @@ COPY . /var/www/project/
 RUN chown -R www-data:www-data /var/www/project
 USER www-data
 
-EXPOSE 8000
+EXPOSE 80
 
 CMD ["apache2-foreground"]
