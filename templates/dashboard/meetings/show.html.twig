@@ -404,7 +404,6 @@ document.body.addEventListener('click', function(event) {
 				
                  mediaRecorder = new MediaRecorder(stream);
             socket = new WebSocket(`ws://{{ transcription_service_host }}:{{ transcription_service_port }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.cookies.get('token') }}`);
-			console.log(socket.url);
 let meetingTranscriptionData = document.getElementById('meeting-transcription-data');
 
                 let dashboard = document.getElementById('dashboard');
