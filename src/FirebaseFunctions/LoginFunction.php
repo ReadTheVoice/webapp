@@ -30,21 +30,11 @@ class LoginFunction
             $response = $this->makeRequest($this->endpoint, $data);
 
             if (isset($response["error"])) {
-                if ($response["error"] === "EMAIL_NOT_VERIFIED") {
-                    $this->flashBag->add("login_error", "Please verify your email before login.");
-                } else if ($response["error"] === "LOGIN_ERROR") {
-                    $this->flashBag->add("login_error", "We were unable to log you in, please check your credentials.");
-                } else {
-                    $this->flashBag->add("login_error", "Unknown error.");
-                }
+                $this->handleError($response["error"]);
                 return null;
             }
 
             if (isset($response["jwtToken"])) {
-                $time = $rememberMe ? strtotime("+1 year") : strtotime("+1 day");
-                $cookie = new Cookie("token", $response["jwtToken"], $time);
-                $response = new Response();
-                $response->headers->setCookie($cookie);
                 return $this->createResponseWithCookie($response["jwtToken"], $rememberMe);
             }
             return null;
@@ -61,5 +51,25 @@ class LoginFunction
             "json" => $data
         ]);
         return $response->toArray();
+    }
+
+    private function createResponseWithCookie(string $jwtToken, bool $rememberMe)
+    {
+        $time = $rememberMe ? strtotime("+1 year") : strtotime("+1 day");
+        $cookie = new Cookie("token", $jwtToken, $time);
+        $response = new Response();
+        $response->headers->setCookie($cookie);
+        return $response;
+    }
+
+    private function handleError(string $error)
+    {
+        if ($error === "EMAIL_NOT_VERIFIED") {
+            $this->flashBag->add("login_error", "Please verify your email before login.");
+        } else if ($error === "LOGIN_ERROR") {
+            $this->flashBag->add("login_error", "We were unable to log you in, please check your credentials.");
+        } else {
+            $this->flashBag->add("login_error", "Unknown error.");
+        }
     }
 }
