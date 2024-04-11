@@ -85,7 +85,7 @@
 											<h5 class="mb-0" id="{{ meeting.id|trim('1234567890', 'left')|lower }}-qrcode-modal">QR Code for
 												{{ meeting.name }}</h5>
 											<div id="qrcode-{{ meeting.id|trim('1234567890', 'left')|lower }}" class="d-flex flex-column">
-												<img src="{{ qr_code_url('readthevoice://'~ meeting.id, 'readthevoice') }}"/>
+												<img src="{{ qr_code_data_uri('readthevoice://'~ meeting.id, 'readthevoice') }}"/>
 												<a class="btn btn-primary" onclick="this.href = document.querySelector('#qrcode-{{ meeting.id|trim('1234567890', 'left')|lower }} img').src;" type="button" download="readthevoice-{{ meeting.name }}.png">
 													<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewbox="0 0 16 16">
 														<path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
