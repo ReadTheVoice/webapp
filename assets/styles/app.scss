@@ -279,30 +279,6 @@ body {
     display: none;
 }
 
-@keyframes breathingBackground {
-
-    0%,
-    100% {
-        background-color: #fff;
-    }
-
-    50% {
-        background-color: #ecfce1;
-    }
-}
-
-.state-0 {
-    background-color: #fff;
-}
-
-.state-1 {
-    animation: breathingBackground 5s ease-in-out infinite;
-}
-
-.state-2 {
-    background-color: #e2e2e2;
-}
-
 .dropdown-menu.show {
     z-index: 300;
 }
@@ -321,4 +297,36 @@ body {
 .card-text {
     flex-grow: 1;
     width: 100%;
+}
+
+.d-flex.col.align-items-stretch {
+    display: none !important;
+}
+
+.card.card-transcription-list {
+    width: 18rem;
+    border-radius: 20px;
+    overflow: hidden;
+    border: none;
+}
+
+.card.card-transcription-list .card-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card.card-transcription-list .card-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    font-style: italic;
+}
+
+h2,
+h5 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
