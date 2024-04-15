@@ -60,8 +60,9 @@
 
 	<form action="{{ path("app_dashboard_settings_delete_account") }}" method="POST" class="mt-2">
 		{% for message in app.flashes("delete_account_error") %}
-			<div class="alert alert-danger" role="alert">
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
 				{{ message }}
+				  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>
 		{% endfor %}
 		<input type="hidden" name="token" value="{{ csrf_token("deleteUserAccount") }}">
@@ -75,7 +76,7 @@
 							You will be automatically logged out.</p>
 					</div>
 					<div class="modal-footer flex-nowrap p-0">
-						<input class="btn btn-lg fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 fw-bold border-end" type="submit" value="Okay" data-bs-dismiss="modal"></input>
+						<input class="btn btn-lg btn-danger fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 fw-bold border-end" type="submit" value="Okay" data-bs-dismiss="modal"></input>
 					<button type="button" class="btn btn-lg fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Cancel</button>
 				</div>
 			</div>
