@@ -14,8 +14,6 @@ import {
 } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 htmx.onLoad(function() {
-
-
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
 })
