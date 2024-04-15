@@ -47,7 +47,7 @@ class EndUserTranscriptionFunction
             }
 
             if (isset($response["message"]) && ($response["message"] === "MEETING_FINISHED")) {
-                $this->flashBag->add("meetings_success", "Transcription ended successfully.");
+                $this->flashBag->add("meetings_success", "Meeting ended successfully.");
             }
 
             if (isset($response["message"]) && ($response["message"] === "MEETING_DELETED")) {
