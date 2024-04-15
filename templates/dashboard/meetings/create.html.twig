@@ -98,6 +98,7 @@
 
 <script>
 document.body.addEventListener('htmx:afterOnLoad', function() {
+    try {
     var userLang = navigator.language || navigator.userLanguage; 
     let langCode = userLang.split('-')[0];
     if (!['bg', 'cs', 'da', 'nl', 'en', 'et', 'fr', 'de', 'el', 'hi', 'hu', 'id', 'it', 'ja', 'ko', 'lv', 'lt', 'ms', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'es', 'sv', 'th', 'tr', 'uk', 'vi'].includes(langCode)) {
@@ -132,6 +133,8 @@ document.body.addEventListener('htmx:afterOnLoad', function() {
     }
 
     setupEventListeners();
+    } catch (e) {
+    }
 });
 
 if (document.readyState === "complete" || document.readyState === "interactive") {
