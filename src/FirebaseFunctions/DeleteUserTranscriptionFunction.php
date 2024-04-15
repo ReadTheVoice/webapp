@@ -47,7 +47,7 @@ class DeleteUserTranscriptionFunction
             }
 
             if (isset($response["message"]) && ($response["message"] === "MEETING_DELETED")) {
-                $this->flashBag->add("meetings_success", "Transcription deleted successfully.");
+                $this->flashBag->add("meetings_success", "Meeting deleted successfully.");
             }
 
         } catch (\Exception $e) {
