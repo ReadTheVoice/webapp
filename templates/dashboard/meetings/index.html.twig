@@ -48,7 +48,7 @@
 			{% endfor %}
 
 			{% if meetings is defined and meetings is not empty %}
-				<div class="d-flew row row-cols-1 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 g-4">
+				<div class="d-flew row row-cols-1 row-cols-lg-5 row-cols-md-3 row-cols-sm-2 g-4">
 					{% for meeting in meetings %}
 						<div class="d-flex col align-items-stretch {{ meeting.state == 0 ? "scheduled" : (meeting.state == 1 ? "started" : "finished") }}">
 							<div class="card card-transcription-list">
