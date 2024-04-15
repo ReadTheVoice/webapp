@@ -58,6 +58,14 @@ $btn-link-color: #fff;
 // Utilities
 @import "bootstrap/scss/utilities/api";
 
+
+@font-face {
+    font-family: "Madimi One";
+    font-style: normal;
+    font-weight: 400;
+    src: local(""), url("../fonts/MadimiOne-Regular.ttf") format("truetype");
+}
+
 .bi {
     vertical-align: -.125em;
     fill: currentColor;
@@ -94,6 +102,7 @@ $btn-link-color: #fff;
 html,
 body {
     height: 100%;
+    font-family: "Madimi One", sans-serif;
 }
 
 .background-radial-gradient {
@@ -304,7 +313,7 @@ body {
 }
 
 .card.card-transcription-list {
-    width: 18rem;
+    width: 25rem;
     border-radius: 20px;
     overflow: hidden;
     border: none;
