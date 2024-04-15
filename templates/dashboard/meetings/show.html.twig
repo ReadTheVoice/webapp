@@ -414,109 +414,121 @@
 </div>
 {% if not meeting.isFinished %}
 	<script>
-		(() => {
-let mediaRecorder = null;
-let socket = null;
+    (() => {
+        let mediaRecorder = null;
+        let socket = null;
+        let isUserAtBottom = true;
 
-function showErrorModal() {
-document.getElementById("error-modal").style.display = "block";
-}
+        function showErrorModal() {
+            document.getElementById("error-modal").style.display = "block";
+        }
 
-document.body.addEventListener("click", function (event) {
-if (event.target.id === "startTranscription{{ randomNum }}") {
-navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
-const meetingRecording = document.getElementById("meeting-recording");
-const loadingSpinner = document.getElementById("loading");
-const meetingTranscription = document.getElementById("meeting-transcription");
-const meetingInRecording = document.getElementById("meeting-in-recording");
-const meetingPauseRecording = document.getElementById("meeting-pause-recording");
+        function enableAutoScroll() {
+            const dashboard = document.getElementById("dashboard");
+            dashboard.addEventListener("scroll", () => {
+                isUserAtBottom = (dashboard.scrollHeight - dashboard.clientHeight) <= (dashboard.scrollTop + 10);
+            });
+        }
 
-if (meetingTranscription) 
-meetingTranscription.style.display = "none";
+        document.body.addEventListener("click", function (event) {
+            if (event.target.id === "startTranscription{{ randomNum }}") {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    const meetingRecording = document.getElementById("meeting-recording");
+                    const loadingSpinner = document.getElementById("loading");
+                    const meetingTranscription = document.getElementById("meeting-transcription");
+                    const meetingInRecording = document.getElementById("meeting-in-recording");
+                    const meetingPauseRecording = document.getElementById("meeting-pause-recording");
 
-if (meetingRecording) 
-meetingRecording.style.display = "none";
+                    if (meetingTranscription)
+                        meetingTranscription.style.display = "none";
 
-if (meetingInRecording) 
-meetingInRecording.style.display = "none";
+                    if (meetingRecording)
+                        meetingRecording.style.display = "none";
 
-if (meetingPauseRecording) 
-meetingPauseRecording.style.display = "none";
+                    if (meetingInRecording)
+                        meetingInRecording.style.display = "none";
 
-if (loadingSpinner) 
-loadingSpinner.style.display = "flex";
+                    if (meetingPauseRecording)
+                        meetingPauseRecording.style.display = "none";
+
+                    if (loadingSpinner)
+                        loadingSpinner.style.display = "flex";
+
+                    mediaRecorder = new MediaRecorder(stream);
+                    socket = new WebSocket(`wss://{{ transcription_service_host }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.session.get("jwtToken") }}`);
+
+                    const meetingTranscriptionData = document.getElementById("meeting-transcription-data");
+                    const dashboard = document.getElementById("dashboard");
+
+                    enableAutoScroll();
+
+                    socket.onopen = () => {
+                        if (meetingRecording)
+                            meetingRecording.style.display = "block";
+
+                        if (meetingInRecording)
+                            meetingInRecording.style.display = "flex";
+
+                        if (loadingSpinner)
+                            loadingSpinner.style.display = "none";
+
+                        mediaRecorder.addEventListener("dataavailable", (event) => {
+                            if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
+                                socket.send(event.data);
+                            }
+                        });
+                        mediaRecorder.start(100);
+
+                        dashboard.scrollTop = dashboard.scrollHeight;
+                    };
+
+                    socket.onmessage = (message) => {
+                        const received = message.data;
+                        if (received && meetingTranscriptionData) {
+                            meetingTranscriptionData.textContent += received; // Append received text
+                            if (isUserAtBottom) {
+                                dashboard.scrollTop = dashboard.scrollHeight;
+                            }
+                        }
+                    };
+
+                    socket.onerror = (error) => {
+                        console.error("WebSocket Error:", error);
+                        showErrorModal();
+                    };
+
+                    socket.onclose = (event) => {
+                        if (!event.wasClean) {
+                            showErrorModal();
+                        }
+                    };
+                }).catch(error => {
+                    console.error("getUserMedia Error:", error);
+                    showErrorModal();
+                });
+            }
+
+            if (event.target.id === "stopTranscription{{ randomNum }}") {
+                if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                    mediaRecorder.stop();
+                    mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                    document.getElementById("meeting-in-recording").style.display = "none";
+
+                    if (socket && socket.readyState === WebSocket.OPEN) {
+                        socket.close(1000, "Normal Closure");
+                    }
+
+                    const transcriptionData = document.getElementById("meeting-transcription-data").textContent;
+                    if (transcriptionData.length > 0) {
+                        document.getElementById("meeting-pause-recording").style.display = "flex";
+                    } else {
+                        document.getElementById("meeting-transcription").style.display = "block";
+                    }
+                }
+            }
+        });
+    })();
+</script>
 
 
-mediaRecorder = new MediaRecorder(stream);
-socket = new WebSocket(`wss://{{ transcription_service_host }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.session.get("jwtToken") }}`);
-
-const meetingTranscriptionData = document.getElementById("meeting-transcription-data");
-const dashboard = document.getElementById("dashboard");
-
-socket.onopen = () => {
-if (meetingRecording) 
-meetingRecording.style.display = "block";
-
-if (meetingInRecording) 
-meetingInRecording.style.display = "flex";
-
-if (loadingSpinner) 
-loadingSpinner.style.display = "none";
-
-
-mediaRecorder.addEventListener("dataavailable", (event) => {
-if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
-socket.send(event.data);
-}
-});
-mediaRecorder.start(100);
-};
-
-socket.onmessage = (message) => {
-const received = message.data;
-if (received && meetingTranscriptionData) {
-meetingTranscriptionData.textContent = received;
-if (dashboard) {
-dashboard.scrollTop = meetingTranscriptionData.scrollHeight;
-}
-}
-};
-
-socket.onerror = (error) => {
-console.error("WebSocket Error:", error);
-showErrorModal();
-};
-
-socket.onclose = (event) => {
-if (! event.wasClean) {
-showErrorModal();
-}
-};
-}).catch(error => {
-console.error("getUserMedia Error:", error);
-showErrorModal();
-});
-}
-
-if (event.target.id === "stopTranscription{{ randomNum }}") {
-if (mediaRecorder && mediaRecorder.state !== "inactive") {
-mediaRecorder.stop();
-mediaRecorder.stream.getTracks().forEach(track => track.stop());
-document.getElementById("meeting-in-recording").style.display = "none";
-
-if (socket && socket.readyState === WebSocket.OPEN) {
-socket.close(1000, "Normal Closure");
-}
-
-const transcriptionData = document.getElementById("meeting-transcription-data").textContent;
-if (transcriptionData.length > 0) {
-document.getElementById("meeting-pause-recording").style.display = "flex";
-} else {
-document.getElementById("meeting-transcription").style.display = "block";
-}
-}
-}
-});
-})();
-	</script>
 {% endif %}{% endblock %}
