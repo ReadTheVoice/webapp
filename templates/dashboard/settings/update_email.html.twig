@@ -47,13 +47,15 @@
 
 	<form action="{{ path("app_dashboard_settings_email") }}" method="POST" class="mt-2">
 		{% for message in app.flashes("email_update_error") %}
-			<div class="alert alert-danger" role="alert">
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
 				{{ message }}
+				  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>
 		{% endfor %}
 		{% for message in app.flashes("email_update_success") %}
-			<div class="alert alert-success" role="alert">
+			<div class="alert alert-success alert-dismissible fade show" role="alert">
 				{{ message }}
+				  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>
 		{% endfor %}
 		<div class="form-floating mb-3 pb-1">
