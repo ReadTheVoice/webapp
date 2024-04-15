@@ -5,8 +5,9 @@
 		<div class="card-body px-4 py-5 px-md-5">
 			<form action="{{ path("app_register") }}" method="POST">
 				{% for message in app.flashes("register_error") %}
-					<div class="alert alert-danger" role="alert">
+					<div class="alert alert-danger alert-dismissible fade show" role="alert">
 						{{ message }}
+						  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>
 				{% endfor %}
 				<div class="form-floating mb-3 pb-1">
