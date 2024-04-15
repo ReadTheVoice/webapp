@@ -4,25 +4,26 @@
 
 {% block dashboardContent %}
 <div class="p-3">
-    <h1>Transcriptions</h1>
+    <h1>Meetings</h1>
     <div class="d-flex flex-row align-items-center gap-2">
         <a href="{{ path('app_dashboard_transcriptions') }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="d-flex bi bi-arrow-left-circle-fill" viewbox="0 0 16 16">
                 <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/></svg>
         </a>
-        <h2>Create a transcription</h2>
+        <h2>Create a meeting</h2>
     </div>
 
     <div class="d-flex flex-column w-100 h-100 p-3">
         <form action="{{ path("app_dashboard_create_transcription") }}" method="POST" class="mt-2">
             {% for message in app.flashes("create_transcription_error") %}
-            <div class="alert alert-danger" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {% endfor %}
             <div class="form-floating mb-3 pb-1">
                 <input type="text" class="form-control" id="name" name="name" placeholder="My transcription" value="{{ app.request.get('name')|default("") }}" required>
-                <label for="name">Transcription name</label>
+                <label for="name">Meeting Name</label>
             </div>
             <div class="form-floating mb-3 pb-1">
                 <textarea class="form-control" id="description" name="description" placeholder="Meeting with..." required>{{ app.request.get('description')|default("") }}</textarea>
@@ -38,7 +39,7 @@
                     <option value="cs">Czech</option>
                     <option value="da">Danish</option>
                     <option value="nl">Dutch</option>
-                    <option value="en" selected>English</option>
+                    <option value="en">English</option>
                     <option value="et">Estonian</option>
                     <option value="fr">French</option>
                     <option value="de">German</option>
@@ -65,18 +66,18 @@
                     <option value="uk">Ukrainian</option>
                     <option value="vi">Vietnamese</option>
                 </select>
-                <label for="language">Transcription language</label>
+                <label for="language">Language</label>
             </div>
             <div class="form-check form-switch mb-3 pb-1">
-                <input class="form-check-input" type="checkbox" id="isaccessibleafter" name="isaccessibleafter" {{ app.request.get('isaccessibleafter') ? 'checked' : '' }}>
+                <input class="form-check-input" type="checkbox" id="isaccessibleafter" name="isaccessibleafter" {{ app.request.get('isaccessibleafter')|default('checked') }}>
                 <label class="form-check-label" for="isaccessibleafter">
-                    The transcript can be accessed after its completion
+                    Transcript Accessible After Meeting
                 </label>
             </div>
             <div class="form-check form-switch mb-3 pb-1" id="enabledeletionDateContainer" style="{{ app.request.get('isaccessibleafter') ? 'display: block;' : 'display: none;' }}">
                 <input class="form-check-input" type="checkbox" id="enabledeletionDate" name="enabledeletionDate" {{ app.request.get('enabledeletionDate') ? 'checked' : '' }}>
                 <label class="form-check-label" for="enabledeletionDate">
-                    Enable automatic deletion date and time
+                    Enable Automatic Deletion Date
                 </label>
             </div>
             <div class="form-floating mb-3 pb-1" id="deletionDateContainer" style="{{ app.request.get('enabledeletionDate') ? 'display: block;' : 'display: none;' }}">
@@ -84,8 +85,8 @@
                 <label for="deletionDate">Automatic Deletion Date and Time</label>
             </div>
             <div class="form-check form-switch mb-3 pb-1">
-                <input class="form-check-input" type="checkbox" id="allowDownload" name="allowDownload">
-                <label class="form-check-label" for="allowDownload">Allow transcript download</label>
+                <input class="form-check-input" type="checkbox" id="allowDownload" name="allowDownload" {{ app.request.get('allowDownload')|default('checked') }}>
+                <label class="form-check-label" for="allowDownload">Allow Download</label>
             </div>
             
 
@@ -97,6 +98,12 @@
 
 <script>
 document.body.addEventListener('htmx:afterOnLoad', function() {
+    var userLang = navigator.language || navigator.userLanguage; 
+    let langCode = userLang.split('-')[0];
+    if (!['bg', 'cs', 'da', 'nl', 'en', 'et', 'fr', 'de', 'el', 'hi', 'hu', 'id', 'it', 'ja', 'ko', 'lv', 'lt', 'ms', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'es', 'sv', 'th', 'tr', 'uk', 'vi'].includes(langCode)) {
+        langCode = 'en';
+    }
+    document.getElementById('language').value = langCode;
     var isAccessibleAfter = document.getElementById("isaccessibleafter");
     var enabledeletionDateContainer = document.getElementById("enabledeletionDateContainer");
     var enabledeletionDate = document.getElementById("enabledeletionDate");
