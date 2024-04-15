@@ -423,7 +423,7 @@ document.getElementById("error-modal").style.display = "block";
 }
 
 document.body.addEventListener("click", function (event) {
-if (event.target.id === "startTranscription {{ randomNum }}") {
+if (event.target.id === "startTranscription{{ randomNum }}") {
 navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
 const meetingRecording = document.getElementById("meeting-recording");
 const loadingSpinner = document.getElementById("loading");
@@ -498,7 +498,7 @@ showErrorModal();
 });
 }
 
-if (event.target.id === "stopTranscription {{ randomNum }}") {
+if (event.target.id === "stopTranscription{{ randomNum }}") {
 if (mediaRecorder && mediaRecorder.state !== "inactive") {
 mediaRecorder.stop();
 mediaRecorder.stream.getTracks().forEach(track => track.stop());
