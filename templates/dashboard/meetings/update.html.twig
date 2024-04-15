@@ -97,6 +97,7 @@
 						</div>
 					{% endif %}
 					<input type="hidden" name="token" value="{{ csrf_token("editTranscription") }}">
+					<input type="hidden" name="redirectToMeeting" value="{{ app.request.get("redirectToMeeting") }}">
 					<button type="submit" class="btn btn-primary w-100 py-2">Update meeting</button>
 				</div>
 

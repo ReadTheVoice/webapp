@@ -186,6 +186,7 @@ class DashboardController extends AbstractController
             $enabledeletionDate = $request->request->get("enabledeletionDate") === 'on';
             $deletionDateInput = $enabledeletionDate ? $request->request->get("deletionDate") : null;
             $transcript = $request->request->get("transcript") ?? null;
+            $redirectToMeeting = $request->request->get("redirectToMeeting") ?? null;
 
 
             $scheduledDate = \DateTime::createFromFormat('Y-m-d\TH:i', $scheduledDateInput);
