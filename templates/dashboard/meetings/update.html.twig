@@ -104,6 +104,8 @@
 
 		<script>
         document.body.addEventListener("htmx:afterOnLoad", function () {
+
+            try {
 			document.querySelectorAll('.nav-link').forEach(function(link) {
 				link.addEventListener('click', function() {
 					let current = document.querySelector('.tab-content .active');
@@ -136,6 +138,8 @@
 				var deletionDateInput = document.getElementById("deletionDate");
 				deletionDateInput.min = this.value;
 			});
+            } catch (e) {
+            }
         });
         if (document.readyState === "complete" || document.readyState === "interactive") {
 setTimeout(() => {
