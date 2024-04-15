@@ -485,7 +485,7 @@
                     socket.onmessage = (message) => {
                         const received = message.data;
                         if (received && meetingTranscriptionData) {
-                            meetingTranscriptionData.textContent += received; // Append received text
+                            meetingTranscriptionData.textContent = received;
                             if (isUserAtBottom) {
                                 dashboard.scrollTop = dashboard.scrollHeight;
                             }
