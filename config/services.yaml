@@ -84,6 +84,11 @@ services:
         arguments:
             $accessToken: '%env(ACCESS_TOKEN)%'
             $endpoint: '%env(GET_TRANSCRIPTION_FUNCTION_ENDPOINT)%'
+            
+    App\FirebaseFunctions\UpdateUserMeetingFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(UPDATE_MEETING_FUNCTION_ENDPOINT)%'
 
     App\EventListener\LogoutSubscriber:
         tags: [kernel.event_listener]
