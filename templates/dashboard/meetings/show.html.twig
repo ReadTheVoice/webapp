@@ -13,7 +13,7 @@
 			<div>
 				<h1>Meetings</h1>
 				<div class="d-flex flex-row align-items-center gap-2">
-					<a href="{{ path('app_dashboard_transcriptions') }}" id="stopTranscription{{ randomNum }}">
+					<a href="{{ path("app_dashboard_transcriptions") }}" id="stopTranscription{{ randomNum }}">
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="d-flex bi bi-arrow-left-circle-fill" viewbox="0 0 16 16">
 							<path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/></svg>
 					</a>
@@ -21,14 +21,14 @@
 				</div>
 			</div>
 			<div class="d-flex flex-row gap-2 ms-auto mt-auto">
-				<button class="d-flex align-items-center gap-1 btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#{{ meeting.id|trim('1234567890', 'left')|lower }}-about-modal">
+				<button class="d-flex align-items-center gap-1 btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#{{ meeting.id|trim("1234567890", "left")|lower }}-about-modal">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewbox="0 0 16 16">
 						<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
 						<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
 					</svg>
 					About
 				</button>
-				<button class="d-flex align-items-center gap-1 btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#{{ meeting.id|trim('1234567890', 'left')|lower }}-qrcode-modal">
+				<button class="d-flex align-items-center gap-1 btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#{{ meeting.id|trim("1234567890", "left")|lower }}-qrcode-modal">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-qr-code" viewbox="0 0 16 16">
 						<path d="M2 2h2v2H2z"/>
 						<path d="M6 0v6H0V0zM5 1H1v4h4zM4 12H2v2h2z"/>
@@ -39,14 +39,14 @@
 					QR Code
 				</button>
 				{% if not meeting.isFinished %}
-					<a class="d-flex align-items-center gap-1 btn btn-light btn-sm" href="{{ path('app_dashboard_transcription_edit', {transcriptionId: meeting.id, redirectToMeeting: true}) }}">
+					<a class="d-flex align-items-center gap-1 btn btn-light btn-sm" href="{{ path("app_dashboard_transcription_edit", {transcriptionId: meeting.id, redirectToMeeting: true}) }}">
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewbox="0 0 16 16">
 							<path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
 						</svg>
 						Edit
 					</a>
 				{% endif %}
-				<button class="d-flex align-items-center gap-1 btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#{{ meeting.id|trim('1234567890', 'left')|lower }}-delete-modal">
+				<button class="d-flex align-items-center gap-1 btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#{{ meeting.id|trim("1234567890", "left")|lower }}-delete-modal">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewbox="0 0 16 16">
 						<path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
 					</svg>
@@ -144,7 +144,7 @@
 									<p class="fw-light">You can continue transcribing it or end it here.</p>
 									<div class="d-flex flex-row gap-2">
 										<button class="btn btn-primary py-2 mt-2" id="startTranscription{{ randomNum }}">Continue your meeting</button>
-										<button class="btn btn-danger py-2 mt-2" data-bs-toggle="modal" data-bs-target="#{{ meeting.id|trim('1234567890', 'left')|lower }}-end-modal">End your meeting</button>
+										<button class="btn btn-danger py-2 mt-2" data-bs-toggle="modal" data-bs-target="#{{ meeting.id|trim("1234567890", "left")|lower }}-end-modal">End your meeting</button>
 									</div>
 								</div>
 							</div>
@@ -280,7 +280,7 @@
 						<p class="fw-light">You can continue transcribing it or end it here.</p>
 						<div class="d-flex flex-row gap-2">
 							<button class="btn btn-primary py-2 mt-2" id="startTranscription{{ randomNum }}">Continue your meeting</button>
-							<button class="btn btn-danger py-2 mt-2" data-bs-toggle="modal" data-bs-target="#{{ meeting.id|trim('1234567890', 'left')|lower }}-end-modal">End your meeting</button>
+							<button class="btn btn-danger py-2 mt-2" data-bs-toggle="modal" data-bs-target="#{{ meeting.id|trim("1234567890", "left")|lower }}-end-modal">End your meeting</button>
 						</div>
 					</div>
 				</div>
@@ -299,15 +299,15 @@
 </div>
 
 
-<div class="modal fade" tabindex="-1" id="{{ meeting.id|trim('1234567890', 'left')|lower }}-qrcode-modal">
+<div class="modal fade" tabindex="-1" id="{{ meeting.id|trim("1234567890", "left")|lower }}-qrcode-modal">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content rounded-3 shadow">
 			<div class="modal-body p-4 text-center">
-				<h5 class="mb-0" id="{{ meeting.id|trim('1234567890', 'left')|lower }}-qrcode-modal">QR Code for
+				<h5 class="mb-0" id="{{ meeting.id|trim("1234567890", "left")|lower }}-qrcode-modal">QR Code for
 					{{ meeting.name }}</h5>
-				<div id="qrcode-{{ meeting.id|trim('1234567890', 'left')|lower }}" class="d-flex flex-column">
-					<img src="{{ qr_code_data_uri('readthevoice://'~ meeting.id, 'readthevoice') }}"/>
-					<a class="btn btn-primary" onclick="this.href = document.querySelector('#qrcode-{{ meeting.id|trim('1234567890', 'left')|lower }} img').src;" type="button" download="readthevoice-{{ meeting.name }}.png">
+				<div id="qrcode-{{ meeting.id|trim("1234567890", "left")|lower }}" class="d-flex flex-column">
+					<img src="{{ qr_code_data_uri("readthevoice://"~ meeting.id, "readthevoice") }}"/>
+					<a class="btn btn-primary" onclick="this.href = document.querySelector("#qrcode-{{ meeting.id|trim("1234567890", "left")|lower }} img").src;" type="button" download="readthevoice-{{ meeting.name }}.png">
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewbox="0 0 16 16">
 							<path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
 							<path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
@@ -321,11 +321,11 @@
 		</div>
 	</div>
 </div>
-<div class="modal fade" tabindex="-1" id="{{ meeting.id|trim('1234567890', 'left')|lower }}-about-modal">
+<div class="modal fade" tabindex="-1" id="{{ meeting.id|trim("1234567890", "left")|lower }}-about-modal">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content rounded-3 shadow">
 			<div class="modal-body p-4">
-				<h5 class="mb-2 text-center" id="{{ meeting.id|trim('1234567890', 'left')|lower }}-about-modal">About the meeting
+				<h5 class="mb-2 text-center" id="{{ meeting.id|trim("1234567890", "left")|lower }}-about-modal">About the meeting
 					{{ meeting.name }}</h5>
 				<p class="mb-0 text-start">
 					<ul>
@@ -349,10 +349,10 @@
 						{% endif %}
 						<li>
 							Is transcription accessible after the end of the meeting:
-							{{ meeting.isTranscriptAccessibleAfter ? 'Yes' : 'No' }}</li>
+							{{ meeting.isTranscriptAccessibleAfter ? "Yes" : "No" }}</li>
 						<li>
 							Allow download:
-							{{ meeting.allowDownload ? 'Yes' : 'No' }}</li>
+							{{ meeting.allowDownload ? "Yes" : "No" }}</li>
 					</ul>
 				</p>
 
@@ -363,28 +363,28 @@
 		</div>
 	</div>
 </div>
-<div class="modal fade" tabindex="-1" id="{{ meeting.id|trim('1234567890', 'left')|lower }}-delete-modal">
+<div class="modal fade" tabindex="-1" id="{{ meeting.id|trim("1234567890", "left")|lower }}-delete-modal">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content rounded-3 shadow">
 			<div class="modal-body p-4 text-center">
-				<h5 class="mb-0" id="{{ meeting.id|trim('1234567890', 'left')|lower }}-delete-modal">Delete
+				<h5 class="mb-0" id="{{ meeting.id|trim("1234567890", "left")|lower }}-delete-modal">Delete
 					{{ meeting.name }}</h5>
 				<p class="mb-0">Are you sure you want to delete this transcription?
 
 				</p>
 			</div>
 			<div class="modal-footer flex-nowrap p-0">
-				<a class="btn btn-lg btn-danger fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 fw-bold border-end" data-bs-dismiss="modal" href="{{ path('app_dashboard_transcriptions_delete', {transcriptionId: meeting.id}) }}">Yes, delete</a>
+				<a class="btn btn-lg btn-danger fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 fw-bold border-end" data-bs-dismiss="modal" href="{{ path("app_dashboard_transcriptions_delete", {transcriptionId: meeting.id}) }}">Yes, delete</a>
 				<button type="button" class="btn btn-lg fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Cancel</button>
 			</div>
 		</div>
 	</div>
 </div>
-<div class="modal fade" tabindex="-1" id="{{ meeting.id|trim('1234567890', 'left')|lower }}-end-modal">
+<div class="modal fade" tabindex="-1" id="{{ meeting.id|trim("1234567890", "left")|lower }}-end-modal">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content rounded-3 shadow">
 			<div class="modal-body p-4 text-center">
-				<h5 class="mb-0" id="{{ meeting.id|trim('1234567890', 'left')|lower }}-end-modal">End transcription
+				<h5 class="mb-0" id="{{ meeting.id|trim("1234567890", "left")|lower }}-end-modal">End transcription
 					{{ meeting.name }}</h5>
 				<p class="mb-0">Are you sure you want to end this transcription?
 					{% if not meeting.isTranscriptAccessibleAfter %}
@@ -393,7 +393,7 @@
 				</p>
 			</div>
 			<div class="modal-footer flex-nowrap p-0">
-				<a class="btn btn-lg btn-danger fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 fw-bold border-end" data-bs-dismiss="modal" href="{{ path('app_dashboard_transcriptions_end', {transcriptionId: meeting.id, redirectToMeeting: true}) }}">Yes, end</a>
+				<a class="btn btn-lg btn-danger fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 fw-bold border-end" data-bs-dismiss="modal" href="{{ path("app_dashboard_transcriptions_end", {transcriptionId: meeting.id, redirectToMeeting: true}) }}">Yes, end</a>
 				<button type="button" class="btn btn-lg fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Cancel</button>
 			</div>
 		</div>
@@ -419,52 +419,52 @@ let mediaRecorder = null;
 let socket = null;
 
 function showErrorModal() {
-document.getElementById('error-modal').style.display = 'block';
+document.getElementById("error-modal").style.display = "block";
 }
 
-document.body.addEventListener('click', function (event) {
-if (event.target.id === 'startTranscription {{ randomNum }}') {
+document.body.addEventListener("click", function (event) {
+if (event.target.id === "startTranscription {{ randomNum }}") {
 navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
-const meetingRecording = document.getElementById('meeting-recording');
-const loadingSpinner = document.getElementById('loading');
-const meetingTranscription = document.getElementById('meeting-transcription');
-const meetingInRecording = document.getElementById('meeting-in-recording');
-const meetingPauseRecording = document.getElementById('meeting-pause-recording');
+const meetingRecording = document.getElementById("meeting-recording");
+const loadingSpinner = document.getElementById("loading");
+const meetingTranscription = document.getElementById("meeting-transcription");
+const meetingInRecording = document.getElementById("meeting-in-recording");
+const meetingPauseRecording = document.getElementById("meeting-pause-recording");
 
 if (meetingTranscription) 
-meetingTranscription.style.display = 'none';
+meetingTranscription.style.display = "none";
 
 if (meetingRecording) 
-meetingRecording.style.display = 'none';
+meetingRecording.style.display = "none";
 
 if (meetingInRecording) 
-meetingInRecording.style.display = 'none';
+meetingInRecording.style.display = "none";
 
 if (meetingPauseRecording) 
-meetingPauseRecording.style.display = 'none';
+meetingPauseRecording.style.display = "none";
 
 if (loadingSpinner) 
-loadingSpinner.style.display = 'flex';
+loadingSpinner.style.display = "flex";
 
 
 mediaRecorder = new MediaRecorder(stream);
-socket = new WebSocket(`wss://{{ transcription_service_host }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.session.get('jwtToken') }}`);
+socket = new WebSocket(`wss://{{ transcription_service_host }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.session.get("jwtToken") }}`);
 
-const meetingTranscriptionData = document.getElementById('meeting-transcription-data');
-const dashboard = document.getElementById('dashboard');
+const meetingTranscriptionData = document.getElementById("meeting-transcription-data");
+const dashboard = document.getElementById("dashboard");
 
 socket.onopen = () => {
 if (meetingRecording) 
-meetingRecording.style.display = 'block';
+meetingRecording.style.display = "block";
 
 if (meetingInRecording) 
-meetingInRecording.style.display = 'flex';
+meetingInRecording.style.display = "flex";
 
 if (loadingSpinner) 
-loadingSpinner.style.display = 'none';
+loadingSpinner.style.display = "none";
 
 
-mediaRecorder.addEventListener('dataavailable', (event) => {
+mediaRecorder.addEventListener("dataavailable", (event) => {
 if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
 socket.send(event.data);
 }
@@ -483,7 +483,7 @@ dashboard.scrollTop = meetingTranscriptionData.scrollHeight;
 };
 
 socket.onerror = (error) => {
-console.error('WebSocket Error:', error);
+console.error("WebSocket Error:", error);
 showErrorModal();
 };
 
@@ -493,26 +493,26 @@ showErrorModal();
 }
 };
 }).catch(error => {
-console.error('getUserMedia Error:', error);
+console.error("getUserMedia Error:", error);
 showErrorModal();
 });
 }
 
-if (event.target.id === 'stopTranscription {{ randomNum }}') {
-if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+if (event.target.id === "stopTranscription {{ randomNum }}") {
+if (mediaRecorder && mediaRecorder.state !== "inactive") {
 mediaRecorder.stop();
 mediaRecorder.stream.getTracks().forEach(track => track.stop());
-document.getElementById('meeting-in-recording').style.display = 'none';
+document.getElementById("meeting-in-recording").style.display = "none";
 
 if (socket && socket.readyState === WebSocket.OPEN) {
 socket.close(1000, "Normal Closure");
 }
 
-const transcriptionData = document.getElementById('meeting-transcription-data').textContent;
+const transcriptionData = document.getElementById("meeting-transcription-data").textContent;
 if (transcriptionData.length > 0) {
-document.getElementById('meeting-pause-recording').style.display = 'flex';
+document.getElementById("meeting-pause-recording").style.display = "flex";
 } else {
-document.getElementById('meeting-transcription').style.display = 'block';
+document.getElementById("meeting-transcription").style.display = "block";
 }
 }
 }
