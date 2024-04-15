@@ -399,11 +399,27 @@
 		</div>
 	</div>
 </div>
+<div class="modal" tabindex="-1" id="error-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog" role="document" style="position: relative; margin: 10% auto; width: fit-content;">
+        <div class="modal-content rounded-3 shadow">
+            <div class="modal-body p-4 text-center">
+                <h5 class="mb-0">An error occurred</h5>
+                <p class="mb-0">Please check your browser settings and authorizations for this page.</p>
+            </div>
+            <div class="modal-footer flex-nowrap p-0">
+                <button type="button" class="btn btn-lg fs-6 text-decoration-none col-6 m-0 rounded-0 w-100" onclick="window.location.reload();">Refresh the Page</button>            </div>
+        </div>
+    </div>
+</div>
 {% if not meeting.isFinished %}
-	<script>
+<script>
 (() => {
     let mediaRecorder = null;
     let socket = null;
+
+    function showErrorModal() {
+        document.getElementById('error-modal').style.display = 'block';
+    }
 
     document.body.addEventListener('click', function(event) {
         if (event.target.id === 'startTranscription{{ randomNum }}') {
@@ -416,11 +432,11 @@
                     const meetingPauseRecording = document.getElementById('meeting-pause-recording');
 
                     if (meetingTranscription) meetingTranscription.style.display = 'none';
-					if (meetingRecording) meetingRecording.style.display = 'none';
-                        if (meetingInRecording) meetingInRecording.style.display = 'none';
+                    if (meetingRecording) meetingRecording.style.display = 'none';
+                    if (meetingInRecording) meetingInRecording.style.display = 'none';
                     if (meetingPauseRecording) meetingPauseRecording.style.display = 'none';
                     if (loadingSpinner) loadingSpinner.style.display = 'flex';
-					
+                    
                     mediaRecorder = new MediaRecorder(stream);
                     socket = new WebSocket(`wss://{{ transcription_service_host }}/transcribe?meeting_id={{ meeting.id }}&language={{ meeting.language }}&token={{ app.request.session.get('jwtToken') }}`);
 
@@ -452,10 +468,18 @@
 
                     socket.onerror = (error) => {
                         console.error('WebSocket Error:', error);
+                        showErrorModal();
+                    };
+
+                    socket.onclose = (event) => {
+                        if (!event.wasClean) {
+                            showErrorModal();
+                        }
                     };
                 })
                 .catch(error => {
                     console.error('getUserMedia Error:', error);
+                    showErrorModal();
                 });
         }
 
@@ -479,5 +503,5 @@
         }
     });
 })();
-	</script>
+</script>
 {% endif %}{% endblock %}
