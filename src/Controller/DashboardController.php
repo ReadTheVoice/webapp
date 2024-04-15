@@ -15,6 +15,7 @@ use App\FirebaseFunctions\CreateUserTranscriptionFunction;
 use App\FirebaseFunctions\DeleteUserTranscriptionFunction;
 use App\FirebaseFunctions\EndUserTranscriptionFunction;
 use App\FirebaseFunctions\GetUserTranscriptionFunction;
+use App\FirebaseFunctions\UpdateUserMeetingFunction;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -138,6 +139,114 @@ class DashboardController extends AbstractController
                     "language" => $language,
                 ]);
             }
+        }
+    }
+
+    #[Route("/meetings/edit/{transcriptionId}", name: "app_dashboard_transcription_edit")]
+    public function updateTranscription(Request $request, VerifyTokenFunction $verifyTokenFunction, GetUserTranscriptionFunction $getUserTranscriptionFunction, UpdateUserMeetingFunction $updateUserMeetingFunction, ValidatorInterface $validator, $transcriptionId, $redirectToMeeting = null): Response
+    {
+        if ($request->getMethod() === "GET") {
+            if (!$request->getSession()->get("jwtToken")) {
+                return $this->redirectToRoute("app_login");
+            } else {
+                $meeting = $getUserTranscriptionFunction->getUserTranscription($transcriptionId)["meeting"];
+                if ($meeting["isFinished"]) {
+                    return $this->redirectToRoute('app_dashboard_transcriptions_get', ['transcriptionId' => $transcriptionId]);
+                }
+                $scheduledDate = (new \DateTime())->setTimestamp($meeting['scheduledDate']['_seconds']);
+                $deletionDate = $meeting['deletionDate'] ? (new \DateTime())->setTimestamp($meeting['deletionDate']['_seconds']) : null;
+                return $this->render("dashboard/meetings/update.html.twig", [
+                    "transcriptionId" => $transcriptionId,
+                    "name" => $meeting["name"],
+                    "description" => $meeting["description"],
+                    "language" => $meeting["language"],
+                    "allowDownload" => $meeting["allowDownload"],
+                    "isTranscriptAccessibleAfter" => $meeting["isTranscriptAccessibleAfter"],
+                    "scheduledDate" => $scheduledDate,
+                    "transcript" => $meeting["transcript"],
+                    "deletionDate" => $deletionDate,
+                    "redirectToMeeting" => $redirectToMeeting,
+                ]);
+            }
+        } else if ($request->getMethod() === "POST") {
+            $token = $request->request->get("token");
+            if (!$this->isCsrfTokenValid("editTranscription", $token)) {
+                return $this->redirectToRoute("app_dashboard_transcription_edit", [
+                    "transcriptionId" => $transcriptionId,
+                    "redirectToMeeting" => $redirectToMeeting,
+                ]);
+            }
+
+            $name = $request->request->get("name");
+            $description = $request->request->get("description");
+            $language = $request->request->get("language");
+            $allowDownload = $request->request->get("allowDownload") === 'on';
+            $isAccessibleAfter = $request->request->get("isaccessibleafter") === 'on';
+            $scheduledDateInput = $request->request->get("scheduledDate");
+            $enabledeletionDate = $request->request->get("enabledeletionDate") === 'on';
+            $deletionDateInput = $enabledeletionDate ? $request->request->get("deletionDate") : null;
+            $transcript = $request->request->get("transcript") ?? null;
+
+
+            $scheduledDate = \DateTime::createFromFormat('Y-m-d\TH:i', $scheduledDateInput);
+            $deletionDate = $enabledeletionDate && $deletionDateInput ? \DateTime::createFromFormat('Y-m-d\TH:i', $deletionDateInput) : null;
+
+            $constraints = new Assert\Collection([
+                "fields" => [
+                    "name" => new Assert\NotBlank(),
+                    "description" => new Assert\NotBlank(),
+                    "language" => new Assert\Choice([
+                        "choices" => ["bg", "cs", "da", "nl", "en", "et", "fr", "de", "el", "hi", "hu", "id", "it", "ja", "ko", "lv", "lt", "ms", "no", "pl", "pt", "ro", "ru", "sk", "es", "sv", "th", "tr", "uk", "vi"],
+                        "message" => "Please select a valid language.",
+                    ]),
+                    "scheduledDate" => new Assert\NotNull([
+                        'message' => 'Scheduled date must be provided.',
+                    ]),
+                    "deletionDate" => $enabledeletionDate ? new Assert\DateTime([
+                        'format' => 'Y-m-d H:i:s',
+                        'message' => 'End date must be a valid date and time.',
+                    ]) : new Assert\Optional(),
+                ],
+                "allowMissingFields" => true,
+            ]);
+
+            $input = [
+                "name" => $name,
+                "description" => $description,
+                "language" => $language,
+                "scheduledDate" => $scheduledDate ? $scheduledDate->format('Y-m-d H:i:s') : null,
+                "deletionDate" => $deletionDate ? $deletionDate->format('Y-m-d H:i:s') : null,
+            ];
+
+            $violations = $validator->validate($input, $constraints);
+
+            if (count($violations) > 0) {
+                foreach ($violations as $violation) {
+                    $this->addFlash("edit_meeting_error", $violation->getMessage());
+                }
+                return $this->redirectToRoute("app_dashboard_transcription_edit", [
+                    "transcriptionId" => $transcriptionId,
+                    "redirectToMeeting" => $redirectToMeeting,
+                ]);
+            }
+
+            if ($deletionDate && $scheduledDate && $deletionDate <= $scheduledDate) {
+                $this->addFlash("edit_meeting_error", "End date must be after the scheduled start date.");
+                return $this->redirectToRoute("app_dashboard_transcription_edit", [
+                    "transcriptionId" => $transcriptionId,
+                    "redirectToMeeting" => $redirectToMeeting,
+                ]);
+            }
+
+            $updateUserMeetingFunction->updateMeeting($transcriptionId, $name, $description, $isAccessibleAfter, $language, $allowDownload, $scheduledDate->format('Y-m-d H:i:s'), $deletionDate ? $deletionDate->format('Y-m-d H:i:s') : null, $transcript ?? null);
+
+            
+                return $this->redirectToRoute("app_dashboard_transcription_edit", [
+                    "transcriptionId" => $transcriptionId,
+                    "redirectToMeeting" => $redirectToMeeting,
+                ]);
+            
+            
         }
     }
     

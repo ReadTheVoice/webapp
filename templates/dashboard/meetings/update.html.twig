@@ -1,0 +1,139 @@
+{% extends "dashboard/index.html.twig" %}
+
+{% block title %}Update
+	{{ name }}
+	- ReadTheVoice
+{% endblock %}
+
+{% block dashboardContent %}
+	<div class="p-3">
+		<h1>Meetings</h1>
+		<div class="d-flex flex-row align-items-center gap-2">
+			{% if app.request.get('redirectToMeeting') == true %}
+				<a href="{{ path('app_dashboard_transcriptions_get', {transcriptionId: transcriptionId}) }}">
+			{% else %}
+				<a href="{{ path('app_dashboard_transcriptions') }}">
+			{% endif %}
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewbox="0 0 16 16">
+					<path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+				</svg>
+				</a>
+				<h2>Edit a meeting</h2>
+			</div>
+
+            {% for message in app.flashes('edit_meeting_error') %}
+							<div class="alert alert-danger alert-dismissible fade show" role="alert">
+								{{ message }}
+                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+							</div>
+						{% endfor %}
+						{% for message in app.flashes('edit_meeting_success') %}
+							<div class="alert alert-success alert-dismissible fade show" role="alert">
+								{{ message }}
+                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+							</div>
+						{% endfor %}
+
+			<form action="{{ path('app_dashboard_transcription_edit', {transcriptionId: transcriptionId}) }}" method="POST" class="mt-2">
+				<ul class="nav nav-underline" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" id="meeting-tab" data-bs-toggle="tab" data-bs-target="#meeting-tabpanel" type="button" role="tab" aria-controls="meeting-tabpanel" aria-selected="true">Information about the meeting</button>
+					</li>
+                    {% if transcript.data is not empty %}
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="transcription-tab" data-bs-toggle="tab" data-bs-target="#transcription-tabpanel" type="button" role="tab" aria-controls="transcription-tabpanel" aria-selected="false">Transcript data</button>
+					</li>
+                    {% endif %}
+				</ul>
+                
+				<div class="tab-content d-flex flex-column w-100 h-100 p-3" id="tab-content">
+					<div class="tab-pane fade show active" id="meeting-tabpanel" role="tabpanel" aria-labelledby="meeting-tab">
+						
+
+						<div class="form-floating mb-3 pb-1">
+							<input type="text" class="form-control" id="name" name="name" placeholder="Enter meeting name" value="{{ name }}" required>
+							<label for="name">Meeting Name</label>
+						</div>
+						<div class="form-floating mb-3 pb-1">
+							<textarea class="form-control" id="description" name="description" placeholder="Describe the meeting" required>{{ description }}</textarea>
+							<label for="description">Description</label>
+						</div>
+						<div class="form-floating mb-3 pb-1">
+							<input type="datetime-local" class="form-control" id="scheduledDate" name="scheduledDate" value="{{ scheduledDate.format('Y-m-d\\TH:i') }}" required>
+							<label for="scheduledDate">Scheduled Date and Time</label>
+						</div>
+						<div class="form-floating mb-3 pb-1">
+							<select class="form-select" id="language" name="language" required>
+								{% set languages = {'bg':'Bulgarian', 'cs':'Czech', 'da':'Danish', 'nl':'Dutch', 'en':'English', 'et':'Estonian', 'fr':'French', 'de':'German', 'el':'Greek', 'hi':'Hindi', 'hu':'Hungarian', 'id':'Indonesian', 'it':'Italian', 'ja':'Japanese', 'ko':'Korean', 'lv':'Latvian', 'lt':'Lithuanian', 'ms':'Malay', 'no':'Norwegian', 'pl':'Polish', 'pt':'Portuguese', 'ro':'Romanian', 'ru':'Russian', 'sk':'Slovak', 'es':'Spanish', 'sv':'Swedish', 'th':'Thai', 'tr':'Turkish', 'uk':'Ukrainian', 'vi':'Vietnamese'} %}
+								{% for code, lang in languages %}
+									<option value="{{ code }}" {% if language == code %} selected {% endif %}>{{ lang }}</option>
+								{% endfor %}
+							</select>
+							<label for="language">Language</label>
+						</div>
+						<div class="form-check form-switch mb-3 pb-1">
+							<input class="form-check-input" type="checkbox" id="isaccessibleafter" name="isaccessibleafter" {% if isTranscriptAccessibleAfter %} checked {% endif %}>
+							<label class="form-check-label" for="isaccessibleafter">Transcript Accessible After Meeting</label>
+						</div>
+						<div class="form-check form-switch mb-3 pb-1" id="enableDeletionDateContainer" style="{{ isTranscriptAccessibleAfter ? 'display: block;' : 'display: none;' }}">
+							<input class="form-check-input" type="checkbox" id="enableDeletionDate" name="enableDeletionDate" {% if deletionDate %} checked {% endif %}>
+							<label class="form-check-label" for="enableDeletionDate">Enable Automatic Deletion Date</label>
+						</div>
+						<div class="form-floating mb-3 pb-1" id="deletionDateContainer" style="{{ deletionDate ? 'display: block;' : 'display: none;' }}">
+							<input type="datetime-local" class="form-control" id="deletionDate" name="deletionDate" value="{{ deletionDate ? deletionDate.format('Y-m-d\\TH:i') : '' }}" min="{{ scheduledDate ? scheduledDate.format('Y-m-d\\TH:i') : '' }}">
+							<label for="deletionDate">Deletion Date and Time</label>
+						</div>
+						<div class="form-check form-switch mb-3 pb-1">
+							<input class="form-check-input" type="checkbox" id="allowDownload" name="allowDownload" {% if allowDownload %} checked {% endif %}>
+							<label class="form-check-label" for="allowDownload">Allow Download</label>
+						</div>
+					</div>
+                    {% if transcript.data is not empty %}
+					<div class="tab-pane fade" id="transcription-tabpanel" role="tabpanel" aria-labelledby="transcription-tab">
+<div class="form-floating mb-3 pb-1">
+							<textarea class="form-control" id="transcript" name="transcript" placeholder="Transcript of the meeting" rows="25" style="height:100%;" required>{{ transcript.data }}</textarea>
+							<label for="transcript">Transcript</label>
+						</div>					</div>
+                    {% endif %}
+				<input type="hidden" name="token" value="{{ csrf_token('editTranscription') }}">
+				<button type="submit" class="btn btn-primary w-100 py-2">Update meeting</button>
+							</div>
+
+            </form>
+		</div>
+
+		<script>
+			document.querySelectorAll('.nav-link').forEach(function(link) {
+				link.addEventListener('click', function() {
+					let current = document.querySelector('.tab-content .active');
+					current.classList.remove('active');
+					current.classList.add('fade');
+					let id = this.getAttribute('data-bs-target');
+					let newTab = document.querySelector(id);
+					newTab.classList.add('active');
+					newTab.classList.remove('fade');
+				});
+			});
+
+			document.getElementById("isaccessibleafter").addEventListener("change", function () {
+				var enableDeletionDateContainer = document.getElementById("enableDeletionDateContainer");
+				var deletionDateContainer = document.getElementById("deletionDateContainer");
+				if (this.checked) {
+					enableDeletionDateContainer.style.display = "block";
+				} else {
+					enableDeletionDateContainer.style.display = "none";
+					deletionDateContainer.style.display = "none";
+				}
+			});
+
+			document.getElementById("enableDeletionDate").addEventListener("change", function () {
+				var deletionDateContainer = document.getElementById("deletionDateContainer");
+				deletionDateContainer.style.display = this.checked ? "block" : "none";
+			});
+
+			document.getElementById("scheduledDate").addEventListener("change", function () {
+				var deletionDateInput = document.getElementById("deletionDate");
+				deletionDateInput.min = this.value;
+			});
+		</script>
+	{% endblock %}
