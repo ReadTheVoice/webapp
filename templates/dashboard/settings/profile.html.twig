@@ -1,6 +1,6 @@
 {% extends "dashboard/settings/index.html.twig" %}
 
-{% block title %}Edit my profile - Settings - ReadTheVoice
+{% block title %}Profile - Settings - ReadTheVoice
 {% endblock %}
 
 {% block dashboardSettingsContent %}
@@ -10,13 +10,10 @@
 			<a class="nav-link active" href="{{ path("app_dashboard_settings_profile") }}">Profile</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="{{ path("app_dashboard_settings_email") }}">Email</a>
+			<a class="nav-link" href="{{ path("app_dashboard_settings_security") }}">Login & Security</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="{{ path("app_dashboard_settings_password") }}">Password</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link" href="{{ path("app_dashboard_settings_delete_account") }}">Delete account</a>
+			<a class="nav-link" href="{{ path("app_dashboard_settings_other") }}">Other</a>
 		</li>
 	</ul>
 
@@ -65,13 +62,13 @@
 		{% for message in app.flashes("profile_error") %}
 			<div class="alert alert-danger alert-dismissible fade show" role="alert">
 				{{ message }}
-				  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>
 		{% endfor %}
 		{% for message in app.flashes("profile_success") %}
 			<div class="alert alert-success alert-dismissible fade show" role="alert">
 				{{ message }}
-				  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>
 		{% endfor %}
 		<div class="form-floating mb-3 pb-1">
