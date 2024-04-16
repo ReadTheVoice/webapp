@@ -89,9 +89,19 @@ services:
         arguments:
             $accessToken: '%env(ACCESS_TOKEN)%'
             $endpoint: '%env(UPDATE_MEETING_FUNCTION_ENDPOINT)%'
+            
+    App\FirebaseFunctions\LogOutOtherSessionsFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(LOGOUT_OTHER_SESSIONS_FUNCTION_ENDPOINT)%'
 
     App\EventListener\LogoutSubscriber:
         tags: [kernel.event_listener]
+
+    App\Helper\GitHelper:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
