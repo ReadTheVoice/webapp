@@ -12,7 +12,7 @@ RUN npm install --ignore-scripts
 RUN npm run build
 
 FROM php:8.1-apache
-RUN apt-get update && apt-get -no-install-recommends install -y \
+RUN apt-get update && apt-get --no-install-recommends install -y \
     acl \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
