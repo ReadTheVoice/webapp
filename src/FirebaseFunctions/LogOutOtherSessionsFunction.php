@@ -1,14 +1,12 @@
-<?php
+<?php 
 
 namespace App\FirebaseFunctions;
 
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 
-
-class DeleteUserAccountFunction
+class LogOutOtherSessionsFunction
 {
     private $accessToken;
     private $endpoint;
@@ -23,11 +21,10 @@ class DeleteUserAccountFunction
         $this->flashBag = $this->requestStack->getSession()->getFlashBag();
     }
 
-    public function deleteUserAccount()
+    public function logOutOtherSessions()
     {
         try {
 
-            $request = $this->requestStack->getCurrentRequest();
             $token = $this->session->get("jwtToken");
             
             $data = [
@@ -41,25 +38,25 @@ class DeleteUserAccountFunction
                     $redirectResponse = new RedirectResponse("/logout");
                     $redirectResponse->send();
                 } else {
-                    if ($response["error"] === "USER_NOT_FOUND") {
-                        $this->flashBag->add("delete_account_error", "User not found.");
-                    } else {
-                        $this->flashBag->add("delete_account_error", "An error occurred.");
+                    if ($response["error"] === "LOGOUT_OTHER_SESSIONS_ERROR") {
+                        $this->flashBag->add("logout_other_sessions_error", "An error occurred when deleting the other sessions.");
                     }
-                    $error = true;
+                    $this->flashBag->add("logout_other_sessions_error", "An error occurred.");
                 }
+                    $error = true;
             }
 
             if (isset($response["message"])) {
+                if ($response["message"] === "LOGOUT_OTHER_SESSIONS_SUCCESS") {
+                    $this->flashBag->add("logout_other_sessions_success", "Your other sessions have been disconnected.");
+                }
                 $error = false;
-                $redirectResponse = new RedirectResponse("/logout");
-                $redirectResponse->send();
             }
 
             return $error;
 
         } catch (\Exception $e) {
-            throw new \RuntimeException("Firebase UpdateUserEmail Request Failed: {$e->getMessage()}", $e->getCode(), $e);
+            throw new \RuntimeException("Firebase LogOutOtherSessions Request Failed: {$e->getMessage()}", $e->getCode(), $e);
         }
     }
 
@@ -67,14 +64,12 @@ class DeleteUserAccountFunction
     {
         $httpClient = HttpClient::create();
 
-        $response = $httpClient->request(
-            "POST", $endpoint, [
+        $response = $httpClient->request("POST", $endpoint, [
             "headers" => [
                 "Authorization" => $this->accessToken,
             ],
             "json" => $data,
-            ]
-        );
+        ]);
 
         return $response->toArray();
     }
