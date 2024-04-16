@@ -52,6 +52,8 @@ class DeleteUserAccountFunction
 
             if (isset($response["message"])) {
                 $error = false;
+                $redirectResponse = new RedirectResponse("/logout");
+                $redirectResponse->send();
             }
 
             return $error;
