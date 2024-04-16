@@ -16,6 +16,8 @@ use App\FirebaseFunctions\DeleteUserTranscriptionFunction;
 use App\FirebaseFunctions\EndUserTranscriptionFunction;
 use App\FirebaseFunctions\GetUserTranscriptionFunction;
 use App\FirebaseFunctions\UpdateUserMeetingFunction;
+use App\FirebaseFunctions\LogOutOtherSessionsFunction;
+use App\Helper\GitHelper;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -52,7 +54,6 @@ class DashboardController extends AbstractController
             if (!$request->getSession()->get("jwtToken")) {
                 return $this->redirectToRoute("app_login");
             } else {
-                $userData = $verifyTokenFunction->verifyToken();
                 return $this->render("dashboard/meetings/create.html.twig");
             }
         } else if ($request->getMethod() === "POST") {
@@ -388,16 +389,11 @@ class DashboardController extends AbstractController
     public function settingsEmail(Request $request, VerifyTokenFunction $verifyTokenFunction, UpdateUserEmailFunction $updateUserEmailFunction, ValidatorInterface $validator): Response
     {
         if ($request->getMethod() === "GET") {
-            $userData = $verifyTokenFunction->verifyToken();
-            return $this->render(
-                "dashboard/settings/update_email.html.twig", [
-                "email" => $userData[0],
-                ]
-            );
+            return $this->RedirectToRoute("app_dashboard_settings_security");
         } else if ($request->getMethod() === "POST") {
             $token = $request->request->get("token");
             if (!$this->isCsrfTokenValid("updateEmail", $token)) {
-                return $this->redirectToRoute("app_dashboard_settings_email");
+                return $this->redirectToRoute("app_dashboard_settings_security");
             }
     
             $email = $request->request->get("email");
@@ -414,7 +410,7 @@ class DashboardController extends AbstractController
                 foreach ($errors as $error) {
                     $this->addFlash("email_update_error", $error->getMessage());
                 }
-                return $this->redirectToRoute("app_dashboard_settings_email");
+                return $this->redirectToRoute("app_dashboard_settings_security");
             }
     
             $error = $updateUserEmailFunction->updateUserEmail($email);
@@ -422,8 +418,21 @@ class DashboardController extends AbstractController
             if (!$error) {
                 return $this->redirectToRoute("app_logout");
             } else {
-                return $this->redirectToRoute("app_dashboard_settings_email");
+                return $this->redirectToRoute("app_dashboard_settings_security");
             }
+        }
+    }
+
+    #[Route("/settings/security", name: "app_dashboard_settings_security")]
+    public function settingsSecurity(Request $request, VerifyTokenFunction $verifyTokenFunction): Response
+    {
+        if ($request->getMethod() === "GET") {
+            $userData = $verifyTokenFunction->verifyToken();
+            return $this->render(
+                "dashboard/settings/security.html.twig", [
+                "email" => $userData[0],
+                ]
+            );
         }
     }
 
@@ -431,13 +440,7 @@ class DashboardController extends AbstractController
     public function settingsPassword(Request $request, VerifyTokenFunction $verifyTokenFunction, ResetPasswordFunction $resetPasswordFunction, ValidatorInterface $validator): Response
     {
         if ($request->getMethod() === "GET") {
-            $userData = $verifyTokenFunction->verifyToken();
-
-            return $this->render(
-                "dashboard/settings/password.html.twig", [
-                "email" => $userData[0],
-                ]
-            );
+           return $this->redirectToRoute("app_dashboard_settings_security");
         } else if ($request->getMethod() === "POST") {
             $token = $request->request->get("token");
             if (!$this->isCsrfTokenValid("resetUserPassword", $token)) {
@@ -457,17 +460,42 @@ class DashboardController extends AbstractController
                 foreach ($errors as $error) {
                     $this->addFlash("reset_password_error", $error->getMessage());
                 }
-                return $this->redirectToRoute("app_dashboard_settings_password");
+                return $this->redirectToRoute("app_dashboard_settings_security");
             }
 
             $error = $resetPasswordFunction->resetPassword($email);
             if (!$error) {
                 $this->addFlash("reset_password_success", "Reset password email sent.");
-                return $this->redirectToRoute("app_dashboard_settings_password");
+                return $this->redirectToRoute("app_dashboard_settings_security");
             } else {
-                return $this->redirectToRoute("app_dashboard_settings_password");
+                return $this->redirectToRoute("app_dashboard_settings_security");
             } 
         }   
+    }
+
+    #[Route("/settings/disconnect", name: "app_dashboard_settings_disconnect")]
+    public function settingsDisconnect(Request $request, VerifyTokenFunction $verifyTokenFunction, LogOutOtherSessionsFunction $logOutOtherSessionsFunction, ValidatorInterface $validator): Response
+    {
+        if ($request->getMethod() === "GET") {
+           $logOutOtherSessionsFunction->logOutOtherSessions();
+            return $this->redirectToRoute("app_dashboard_settings_security");
+        } 
+    }
+
+    #[Route("/settings/other", name: "app_dashboard_settings_other")]
+    public function settingsOther(Request $request, GitHelper $gitHelper): Response
+    {
+        if ($request->getMethod() === "GET") {
+            $gitInfo = $gitHelper->getGitInformation();
+    
+            return $this->render("dashboard/settings/other.html.twig", [
+                "branch" => $gitInfo['branch'],
+                "hash" => $gitInfo['hash'],
+                "tag" => $gitInfo['tag']
+            ]);
+        }
+    
+        return $this->render("dashboard/settings/other.html.twig");
     }
 
     #[Route("/settings/deleteaccount", name: "app_dashboard_settings_delete_account")]
@@ -475,18 +503,16 @@ class DashboardController extends AbstractController
     {
 
         if ($request->getMethod() === "GET") {
-            $userData = $verifyTokenFunction->verifyToken();
-
-            return $this->render("dashboard/settings/delete_account.html.twig");
+            return $this->redirectToRoute("app_dashboard_settings_other");
         } else if ($request->getMethod() === "POST") {
             $token = $request->request->get("token");
             if (!$this->isCsrfTokenValid("deleteUserAccount", $token)) {
-                return $this->redirectToRoute("app_dashboard_settings_delete_account");
+                return $this->redirectToRoute("app_dashboard_settings_other");
             }
 
             $error = $deleteUserAccountFunction->deleteUserAccount();
 
-            return $this->redirectToRoute("app_dashboard_settings_delete_account");
+            return $this->redirectToRoute("app_dashboard_settings_other");
         }   
     }
 
