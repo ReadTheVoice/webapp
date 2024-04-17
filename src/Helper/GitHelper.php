@@ -17,20 +17,36 @@ class GitHelper
         $branch = null;
         $hash = null;
         $tag = null;
-
+    
         if (preg_match('#ref: refs/heads/(.+)#', $headContent, $matches)) {
             $branch = $matches[1];
             $branchPath = $this->gitDir . sprintf('/refs/heads/%s', $branch);
             if (is_readable($branchPath) && $hashContent = file_get_contents($branchPath)) {
                 $hash = substr($hashContent, 0, 7);
             }
-
-            $tagPath = $this->gitDir . sprintf('/refs/tags/%s', $branch);
-            if (is_readable($tagPath) && $tagContent = file_get_contents($tagPath)) {
-                $tag = substr($tagContent, 0, 7);
-            }
         }
-
+    
+        $tag = $this->getLastTag();
+    
         return ['branch' => $branch, 'hash' => $hash, 'tag' => $tag];
+    }
+    
+    private function getLastTag(): ?string
+    {
+        $tagsDir = $this->gitDir . '/refs/tags';
+        $tags = scandir($tagsDir);
+    
+        if ($tags === false) {
+            return null;
+        }
+    
+        $tags = array_diff($tags, ['.', '..']);
+        if (empty($tags)) {
+            return null;
+        }
+    
+        rsort($tags);
+    
+        return $tags[0];
     }
 }
