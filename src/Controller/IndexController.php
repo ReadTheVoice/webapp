@@ -22,7 +22,7 @@ class IndexController extends AbstractController
     }
 
     #[Route("/diapo", name: "app_redirect_diapo")]
-    public function index(Request $request): Response
+    public function diapo(Request $request): Response
     {
         return new RedirectResponse("https://www.canva.com/design/DAGHB6MNr4Y/NTH6i_qz2eWRfSciBBAJ1g/edit");
     }
