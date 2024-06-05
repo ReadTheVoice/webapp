@@ -1,0 +1,14 @@
+{% extends "dashboard/index.html.twig" %}
+
+{% block title %}Settings - ReadTheVoice
+{% endblock %}
+
+{% block dashboardContent %}
+
+	<div class="p-3">
+		<h1>Settings</h1>
+		<div id="dashboardSettingsContent" class="d-flex flex-column w-100 h-100">
+			{% block dashboardSettingsContent %}{% endblock %}
+		</div>
+	</div>
+{% endblock %}

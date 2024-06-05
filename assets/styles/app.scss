@@ -1,0 +1,341 @@
+$enable-gradients: true;
+$enable-shadows: true;
+
+$offcanvas-box-shadow: 0 1rem 3rem rgba(0, 0, 0, .175);
+
+// Include functions first
+@import "bootstrap/scss/functions";
+
+// Customize some defaults
+$body-color: #333;
+$body-bg: #fff;
+$border-radius: .4rem;
+$primary: #172236;
+$btn-link-color: #fff;
+
+// Required
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
+@import "bootstrap/scss/root";
+@import "bootstrap/scss/reboot";
+
+@import "bootstrap/scss/type";
+@import "bootstrap/scss/images";
+@import "bootstrap/scss/containers";
+@import "bootstrap/scss/grid";
+@import "bootstrap/scss/tables";
+@import "bootstrap/scss/forms";
+@import "bootstrap/scss/buttons";
+@import "bootstrap/scss/transitions";
+@import "bootstrap/scss/dropdown";
+@import "bootstrap/scss/button-group";
+@import "bootstrap/scss/nav";
+@import "bootstrap/scss/navbar"; // Requires nav
+@import "bootstrap/scss/card";
+@import "bootstrap/scss/breadcrumb";
+@import "bootstrap/scss/accordion";
+@import "bootstrap/scss/pagination";
+@import "bootstrap/scss/badge";
+@import "bootstrap/scss/alert";
+@import "bootstrap/scss/progress";
+@import "bootstrap/scss/list-group";
+@import "bootstrap/scss/close";
+@import "bootstrap/scss/toasts";
+@import "bootstrap/scss/modal"; // Requires transitions
+@import "bootstrap/scss/tooltip";
+@import "bootstrap/scss/popover";
+@import "bootstrap/scss/carousel";
+@import "bootstrap/scss/spinners";
+@import "bootstrap/scss/offcanvas"; // Requires transitions
+@import "bootstrap/scss/placeholders";
+
+// Helpers
+@import "bootstrap/scss/helpers";
+
+// Utilities
+@import "bootstrap/scss/utilities/api";
+
+
+@font-face {
+    font-family: "Madimi One";
+    font-style: normal;
+    font-weight: 400;
+    src: local(""), url("../fonts/MadimiOne-Regular.ttf") format("truetype");
+}
+
+.bi {
+    vertical-align: -.125em;
+    fill: currentColor;
+}
+
+.spinner-parent {
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transition: all .1s ease-in-out;
+}
+
+#content {
+    opacity: 1;
+    transition: opacity 0.4s;
+    pointer-events: all;
+}
+
+.htmx-request .spinner-parent,
+.htmx-request.spinner-parent {
+    display: flex;
+    opacity: 1;
+    z-index: 9999;
+
+    ~#content {
+        opacity: 0.35;
+        pointer-events: none;
+    }
+}
+
+html,
+body {
+    height: 100%;
+    font-family: "Madimi One", sans-serif;
+}
+
+.background-radial-gradient {
+    background-color: hsl(218, 41%, 15%);
+    background-image: radial-gradient(650px circle at 0% 0%, hsl(218, 41%, 35%) 15%, hsl(218, 41%, 30%) 35%, hsl(218, 41%, 20%) 75%, hsl(218, 41%, 19%) 80%, transparent 100%), radial-gradient(1250px circle at 100% 100%, hsl(218, 41%, 45%) 15%, hsl(218, 41%, 30%) 35%, hsl(218, 41%, 20%) 75%, hsl(218, 41%, 19%) 80%, transparent 100%);
+}
+
+#shape-1 {
+    height: 220px;
+    width: 220px;
+    top: -60px;
+    left: -130px;
+    overflow: hidden;
+}
+
+#shape-2 {
+    bottom: -150px;
+    right: -200px;
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+}
+
+.bg-glass {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    border-radius: $border-radius;
+    backdrop-filter: saturate(200%) blur(5px);
+}
+
+.spinner {
+    animation: rotator 1.4s linear infinite;
+}
+
+@keyframes rotator {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(270deg);
+    }
+}
+
+.path {
+    stroke-dasharray: 187;
+    stroke-dashoffset: 0;
+    transform-origin: center;
+    animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
+}
+
+
+@keyframes colors {
+    0% {
+        stroke: #4285F4;
+    }
+
+    25% {
+        stroke: #DE3E35;
+    }
+
+    50% {
+        stroke: #F7C223;
+    }
+
+    75% {
+        stroke: #1B9A59;
+    }
+
+    100% {
+        stroke: #4285F4;
+    }
+}
+
+@keyframes dash {
+    0% {
+        stroke-dashoffset: 187;
+    }
+
+    50% {
+        stroke-dashoffset: 46.75;
+        transform: rotate(135deg);
+    }
+
+    100% {
+        stroke-dashoffset: 187;
+        transform: rotate(450deg);
+    }
+}
+
+#auth-header {
+    z-index: 10;
+
+    h1 {
+        color: $body-bg;
+
+        span {
+            color: #8cb1f3;
+        }
+    }
+
+    p {
+        color: #bad0f8;
+    }
+}
+
+.navLink:hover {
+    transform: scale(1.2)
+}
+
+.navLink {
+    transition: all 200ms linear;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #c1d9ee;
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: saturate(200%) blur(5px);
+}
+
+.navLink i {
+    font-size: 2em
+}
+
+@media screen and (max-width:425px) {
+    .navLink i {
+        font-size: 1.5em
+    }
+
+    .navLink {
+        width: 48px;
+        height: 48px;
+        line-height: 32px
+    }
+
+    .navLabel {
+        display: none
+    }
+}
+
+.navLink a {
+    text-decoration: none;
+    color: #204063
+}
+
+.smallContainer {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.h-87 {
+    height: 87vh;
+}
+
+.settings-svg {
+    width: auto;
+    max-height: 45vh;
+}
+
+.meetings-svg {
+    width: auto;
+    max-height: 20vh;
+}
+
+.dashboard-content {
+    overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 10px;
+
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: $border-radius;
+    background: #c2c9d2;
+}
+
+.modal {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-backdrop {
+    display: none;
+}
+
+.dropdown-menu.show {
+    z-index: 300;
+}
+
+.card.card-transcription-list {
+    width: 100%;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-align: left;
+}
+
+.card-text {
+    flex-grow: 1;
+    width: 100%;
+}
+
+.d-flex.col.align-items-stretch {
+    display: none !important;
+}
+
+.card.card-transcription-list {
+    width: 25rem;
+    border-radius: 20px;
+    overflow: hidden;
+    border: none;
+}
+
+.card.card-transcription-list .card-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card.card-transcription-list .card-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    font-style: italic;
+}
+
+h2,
+h5 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

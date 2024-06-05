@@ -1,0 +1,26 @@
+{% extends "reset_password/common/index.html.twig" %}
+
+{% block form %}
+	<div class="card bg-glass">
+		<div class="card-body px-4 py-5 px-md-5">
+			<form action="{{ path("app_reset_password") }}">
+				{% for message in app.flashes("reset_password_error") %}
+					<div class="alert alert-danger alert-dismissible fade show" role="alert">
+						{{ message }}
+						  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+				{% endfor %}
+				<div class="form-floating mb-3 pb-1">
+					<input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" value="{{ app.request.get("email")|default("") }}" required>
+					<label for="email">Email address</label>
+				</div>
+				<input type="hidden" name="token" value="{{ csrf_token("reset") }}">
+				<input class="btn btn-primary w-100 py-2" type="submit" value="Reset my password"></input>
+
+			<div class="text-muted pt-3">Do you think you remember your password?
+				<a href="{{ path("app_login") }}">Go back to login</a>
+			</div>
+		</form>
+
+	</div>
+{% endblock %}

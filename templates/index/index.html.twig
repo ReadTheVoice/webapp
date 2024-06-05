@@ -1,0 +1,16 @@
+{% extends "base.html.twig" %}
+
+{% block title %}ReadTheVoice
+{% endblock %}
+
+{% block body %}
+	<div class="d-flex flex-column min-vh-100 justify-content-center align-items-center spinner-parent" id="spinner">
+		<svg class="spinner" width="60px" height="60px" viewbox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+			<circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+		</svg>
+		<span class="visually-hidden">Loading...</span>
+	</div>
+	<div id="content" class="w-100 h-100">
+		{% block content %}{% endblock %}
+	</div>
+{% endblock %}

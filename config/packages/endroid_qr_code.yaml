@@ -1,0 +1,21 @@
+endroid_qr_code:
+    default:
+        writer: Endroid\QrCode\Writer\PngWriter
+        size: 300
+        margin: 10
+        encoding: 'UTF-8'
+        errorCorrectionLevel: 'low'
+        roundBlockSizeMode: 'margin'
+        validateResult: false
+
+    readthevoice:
+        writer: Endroid\QrCode\Writer\PngWriter
+        size: 300
+        margin: 5
+        encoding: 'UTF-8'
+        errorCorrectionLevel: 'quartile'
+        roundBlockSizeMode: 'margin'
+        logoPath: '%kernel.project_dir%/public/build/images/logo.png'
+        logoResizeToWidth: 100
+        logoPunchoutBackground: false
+        validateResult: false

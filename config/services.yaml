@@ -1,0 +1,107 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\FirebaseFunctions\LoginFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(LOGIN_FUNCTION_ENDPOINT)%'
+
+    App\FirebaseFunctions\LogoutFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(LOGOUT_FUNCTION_ENDPOINT)%'
+
+    App\FirebaseFunctions\RegisterFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(REGISTER_FUNCTION_ENDPOINT)%'
+
+    App\FirebaseFunctions\ResetPasswordFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(RESET_PASSWORD_ENDPOINT)%'
+
+    App\FirebaseFunctions\VerifyTokenFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(VERIFY_TOKEN_ENDPOINT)%'
+
+    App\FirebaseFunctions\UpdateUserProfileFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(UPDATE_USER_PROFILE_ENDPOINT)%'
+
+    App\FirebaseFunctions\UpdateUserEmailFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(UPDATE_USER_EMAIL_ENDPOINT)%'
+
+    App\FirebaseFunctions\DeleteUserAccountFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(DELETE_USER_ACCOUNT_FUNCTION_ENDPOINT)%'
+            
+    App\FirebaseFunctions\ListUserMeetingsFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(LIST_MEETINGS_FUNCTION_ENDPOINT)%'
+
+    App\FirebaseFunctions\CreateUserTranscriptionFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(CREATE_TRANSCRIPTION_FUNCTION_ENDPOINT)%'
+
+    App\FirebaseFunctions\DeleteUserTranscriptionFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(DELETE_TRANSCRIPTION_FUNCTION_ENDPOINT)%'    
+            
+    App\FirebaseFunctions\EndUserTranscriptionFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(END_TRANSCRIPTION_FUNCTION_ENDPOINT)%'
+    
+    App\FirebaseFunctions\GetUserTranscriptionFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(GET_TRANSCRIPTION_FUNCTION_ENDPOINT)%'
+            
+    App\FirebaseFunctions\UpdateUserMeetingFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(UPDATE_MEETING_FUNCTION_ENDPOINT)%'
+            
+    App\FirebaseFunctions\LogOutOtherSessionsFunction:
+        arguments:
+            $accessToken: '%env(ACCESS_TOKEN)%'
+            $endpoint: '%env(LOGOUT_OTHER_SESSIONS_FUNCTION_ENDPOINT)%'
+
+    App\EventListener\LogoutSubscriber:
+        tags: [kernel.event_listener]
+
+    App\Helper\GitHelper:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
