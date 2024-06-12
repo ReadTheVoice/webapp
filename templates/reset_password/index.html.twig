@@ -3,7 +3,7 @@
 {% block form %}
 	<div class="card bg-glass">
 		<div class="card-body px-4 py-5 px-md-5">
-			<form action="{{ path("app_reset_password") }}">
+			<form action="{{ path("app_reset_password") }}" method="POST">
 				{% for message in app.flashes("reset_password_error") %}
 					<div class="alert alert-danger alert-dismissible fade show" role="alert">
 						{{ message }}
